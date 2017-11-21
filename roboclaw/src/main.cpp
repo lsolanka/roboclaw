@@ -12,7 +12,7 @@ namespace po = boost::program_options;
 void read_info(roboclaw::io::serial_controller& controller)
 {
     namespace read_commands = roboclaw::io::read_commands;
-    std::cout << "Firmware version: " << controller.read<read_commands::firmware_version>() << std::endl;
+    std::cout << "Firmware version: " << controller.read<read_commands::firmware_version>();
 
     auto encoder_mode = controller.read<read_commands::encoder_mode>();
     std::cout << "Encoder mode: " << +encoder_mode.enc1 << ", " << +encoder_mode.enc2 << std::endl;
@@ -31,6 +31,9 @@ void read_info(roboclaw::io::serial_controller& controller)
 
     auto logic_battery_v_settings = controller.read<read_commands::logic_battery_voltage_settings>();
     std::cout << "Logic battery voltage settings: " << logic_battery_v_settings.min << ", " << logic_battery_v_settings.max << std::endl;
+
+    auto temperature = controller.read<read_commands::temperature>();
+    std::cout << "Temperature: " << temperature << std::endl;
 }
 
 int main(int argc, char** argv)

@@ -129,6 +129,17 @@ struct battery_voltage_settings_base
 using main_battery_voltage_settings = battery_voltage_settings_base<59>;
 using logic_battery_voltage_settings = battery_voltage_settings_base<60>;
 
+struct temperature
+{
+    using return_type = float;
+    static constexpr uint8_t CMD = 82;
+
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    {
+        return read_value<uint16_t>(port, crc) / 10.f;
+    }
+};
+
 } // namespace read_commands
 } // namespace io
 } // namespace roboclaw
