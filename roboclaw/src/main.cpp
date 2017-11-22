@@ -14,9 +14,6 @@ void read_info(roboclaw::io::serial_controller& controller)
     namespace read_commands = roboclaw::io::read_commands;
     std::cout << "Firmware version: " << controller.read<read_commands::firmware_version>();
 
-    auto encoder_mode = controller.read<read_commands::encoder_mode>();
-    std::cout << "Encoder mode: " << +encoder_mode.enc1 << ", " << +encoder_mode.enc2 << std::endl;
-
     std::cout << "Main battery voltage: " << controller.read<read_commands::main_battery_voltage>() << std::endl;
     std::cout << "Logic battery voltage: " << controller.read<read_commands::logic_battery_voltage>() << std::endl;
 
@@ -32,8 +29,27 @@ void read_info(roboclaw::io::serial_controller& controller)
     auto logic_battery_v_settings = controller.read<read_commands::logic_battery_voltage_settings>();
     std::cout << "Logic battery voltage settings: " << logic_battery_v_settings.min << ", " << logic_battery_v_settings.max << std::endl;
 
-    auto temperature = controller.read<read_commands::temperature>();
-    std::cout << "Temperature: " << temperature << std::endl;
+    auto temp_1 = controller.read<read_commands::board_temperature_1>();
+    std::cout << "Board temperature 1: " << temp_1 << std::endl;
+
+    auto temp_2 = controller.read<read_commands::board_temperature_2>();
+    std::cout << "Board temperature 2: " << temp_2 << std::endl;
+
+    auto status = controller.read<read_commands::status>();
+    std::cout << "Status" << std::endl << get_string(status);
+
+    std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
+
+    auto m1_current_limit = controller.read<read_commands::m1_current_limit>();
+    auto m2_current_limit = controller.read<read_commands::m1_current_limit>();
+    std::cout << "M1 current limit: min: " << m1_current_limit.min << ", max: " << m1_current_limit.max << std::endl;
+    std::cout << "M2 current limit: min: " << m2_current_limit.min << ", max: " << m2_current_limit.max << std::endl;
+
+    std::cout << "M1 encoder " << get_string(controller.read<read_commands::m1_encoder_count>()) << std::endl;
+    std::cout << "M2 encoder " << get_string(controller.read<read_commands::m2_encoder_count>()) << std::endl;
+
+    std::cout << "M1 encoder speed: " << get_string(controller.read<read_commands::m1_encoder_speed>()) << std::endl;
+    std::cout << "M2 encoder speed: " << get_string(controller.read<read_commands::m2_encoder_speed>()) << std::endl;
 }
 
 int main(int argc, char** argv)
