@@ -344,6 +344,8 @@ struct encoder_speed_base
 };
 using m1_encoder_speed = encoder_speed_base<18>;
 using m2_encoder_speed = encoder_speed_base<19>;
+using m1_raw_speed = encoder_speed_base<30>;
+using m2_raw_speed = encoder_speed_base<31>;
 
 template<typename T>
 std::string _get_encoder_speed_string(const typename T::return_type& m)
@@ -359,6 +361,84 @@ std::string get_string(const m1_encoder_speed::return_type& m)
 std::string get_string(const m2_encoder_speed::return_type& m)
 {
     return _get_encoder_speed_string<m2_encoder_speed>(m);
+}
+std::string get_string(const m1_raw_speed::return_type& m)
+{
+    return _get_encoder_speed_string<m1_raw_speed>(m);
+}
+std::string get_string(const m2_raw_speed::return_type& m)
+{
+    return _get_encoder_speed_string<m2_raw_speed>(m);
+}
+
+struct motor_instantaneous_speed
+{
+    struct return_type
+    {
+        uint32_t m1;
+        uint32_t m2;
+    };
+    static constexpr uint8_t CMD = 79;
+
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    {
+        return_type r;
+
+        r.m1 = read_value<uint32_t>(port, crc);
+        r.m2 = read_value<uint32_t>(port, crc);
+
+        return r;
+    }
+};
+
+std::string get_string(const motor_instantaneous_speed::return_type& speed)
+{
+    std::stringstream ss;
+    ss << "m1: " << speed.m1 << ", m2: " << speed.m2;
+    return ss.str();
+}
+
+template<uint8_t command_id>
+struct motor_pid_base
+{
+    struct return_type
+    {
+        float p;
+        float i;
+        float d;
+        float qpps;
+    };
+    static constexpr uint8_t CMD = command_id;
+
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    {
+        return_type r;
+
+        r.p = read_value<uint32_t>(port, crc) / 65536.f;
+        r.i = read_value<uint32_t>(port, crc) / 65536.f;
+        r.d = read_value<uint32_t>(port, crc) / 65536.f;
+        r.qpps = read_value<uint32_t>(port, crc);
+
+        return r;
+    }
+};
+using m1_velocity_pid = motor_pid_base<55>;
+using m2_velocity_pid = motor_pid_base<56>;
+
+template<uint8_t command_id>
+std::string get_string(const typename motor_pid_base<command_id>::return_type& m)
+{
+    std::stringstream ss;
+    ss << "p: " << m.p << ", i: " << m.i << ", d: " << m.d << ", qpps: " << m.qpps;
+    return ss.str();
+}
+std::string get_string(const m1_velocity_pid::return_type& m)
+{
+    return get_string<m1_velocity_pid::CMD>(m);
+}
+std::string get_string(const m2_velocity_pid::return_type& m)
+{
+    return get_string<m2_velocity_pid::CMD>(m);
 }
 
 } // namespace read_commands

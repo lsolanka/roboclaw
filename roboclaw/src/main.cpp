@@ -50,6 +50,12 @@ void read_info(roboclaw::io::serial_controller& controller)
 
     std::cout << "M1 encoder speed: " << get_string(controller.read<read_commands::m1_encoder_speed>()) << std::endl;
     std::cout << "M2 encoder speed: " << get_string(controller.read<read_commands::m2_encoder_speed>()) << std::endl;
+    std::cout << "M1 raw speed: " << get_string(controller.read<read_commands::m1_raw_speed>()) << std::endl;
+    std::cout << "M2 raw speed: " << get_string(controller.read<read_commands::m2_raw_speed>()) << std::endl;
+    std::cout << "Instantaneous speed: " << get_string(controller.read<read_commands::motor_instantaneous_speed>()) << std::endl;
+
+    std::cout << "M1 velocity PID: " << get_string(controller.read<read_commands::m1_velocity_pid>()) << std::endl;
+    std::cout << "M2 velocity PID: " << get_string(controller.read<read_commands::m2_velocity_pid>()) << std::endl;
 }
 
 int main(int argc, char** argv)
