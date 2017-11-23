@@ -2,28 +2,14 @@
 
 #include <string>
 #include <boost/asio.hpp>
-#include <boost/units/quantity.hpp>
-#include <boost/units/systems/si/electric_potential.hpp>
-#include <boost/units/systems/si/current.hpp>
-#include <boost/units/systems/temperature/celsius.hpp>
-#include <boost/units/systems/si/io.hpp>
 
 #include "io.h"
 #include "crc_calculator.h"
 
-template <class Units>
-using quantity = boost::units::quantity<Units, float>;
+#include "read_commands/firmware_version.hpp"
+#include "read_commands/battery_voltage.hpp"
+#include "read_commands/motor_pwm_values.hpp"
 
-using boost::units::si::electric_potential;
-using boost::units::si::volt;
-using boost::units::si::volts;
-
-using boost::units::si::current;
-using boost::units::si::ampere;
-using boost::units::si::amperes;
-
-using boost::units::celsius::temperature;
-namespace celsius = boost::units::celsius;
 
 namespace roboclaw
 {
@@ -32,64 +18,6 @@ namespace io
 
 namespace read_commands
 {
-
-struct firmware_version
-{
-    using return_type = std::string;
-    static constexpr uint8_t CMD = 21;
-
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
-    {
-       char c;
-       std::string result;
-       while (true) {
-           boost::asio::read(port, boost::asio::buffer(&c, 1));
-           if (c != 0) {
-               result += c;
-           }
-           else {
-               break;
-           }
-       }
-
-       crc << result;
-       return result;
-    }
-};
-
-template<uint8_t command_id>
-struct battery_voltage_base
-{
-    using return_type = quantity<electric_potential>;
-    static constexpr uint8_t CMD = command_id;
-
-    static return_type read_response(boost::asio::serial_port& port,
-                                     crc_calculator_16& crc)
-    {
-        uint16_t value = read_value<uint16_t>(port, crc);
-        return (value / 10.f) * volts;
-    }
-};
-using main_battery_voltage = battery_voltage_base<24>;
-using logic_battery_voltage = battery_voltage_base<25>;
-
-struct motor_pwm_values
-{
-    struct return_type
-    {
-        float m1;
-        float m2;
-    };
-    static constexpr uint8_t CMD = 48;
-
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
-    {
-        return_type r;
-        r.m1 = read_value<uint16_t>(port, crc) / 327.67f;
-        r.m2 = read_value<uint16_t>(port, crc) / 327.67f;
-        return r;
-    }
-};
 
 struct motor_currents
 {

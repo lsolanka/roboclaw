@@ -4,8 +4,8 @@
 #include <boost/program_options.hpp>
 #include <boost/asio/serial_port.hpp>
 
-#include "roboclaw/io.h"
-#include "roboclaw/read_commands.h"
+#include "roboclaw/io/io.h"
+#include "roboclaw/io/read_commands.h"
 
 namespace po = boost::program_options;
 
