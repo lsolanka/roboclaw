@@ -23,6 +23,12 @@ uint16_t read_crc(boost::asio::serial_port& port)
     return boost::endian::big_to_native(value);
 }
 
+void write_crc(boost::asio::serial_port& port, uint16_t crc)
+{
+    boost::endian::native_to_big_inplace(crc);
+    boost::asio::write(port, boost::asio::buffer(&crc, 2));
+}
+
 template<typename T>
 T read_value(boost::asio::serial_port& port, crc_calculator_16& crc)
 {
@@ -30,6 +36,14 @@ T read_value(boost::asio::serial_port& port, crc_calculator_16& crc)
     boost::asio::read(port, boost::asio::buffer(&value, sizeof(T)));
     crc << value;
     return boost::endian::big_to_native(value);
+}
+
+template<typename T>
+void write_value(T value, boost::asio::serial_port& port, crc_calculator_16& crc)
+{
+    boost::endian::native_to_big_inplace(value);
+    boost::asio::write(port, boost::asio::buffer(&value, sizeof(T)));
+    crc << value;
 }
 
 
@@ -58,7 +72,7 @@ class serial_controller
         crc_calculator_16 calculated_crc;
         calculated_crc << get_address() << uint8_t(command::CMD);
         
-        send_read_command<command>();
+        send_command<command>();
         typename command::return_type result = command::read_response(get_port(), calculated_crc);
 
         uint16_t received_crc = read_crc(get_port());
@@ -76,6 +90,22 @@ class serial_controller
         return result;
     }
 
+    template<typename command>
+    bool write(const command& cmd)
+    {
+        send_command<command>();
+
+        crc_calculator_16 calculated_crc;
+        calculated_crc << get_address() << uint8_t(command::CMD);
+
+        cmd.write(get_port(), calculated_crc);
+        write_crc(get_port(), calculated_crc.get());
+
+        uint8_t response;
+        boost::asio::read(port, boost::asio::buffer(&response, 1));
+        return response == 0xff;
+    }
+
     ~serial_controller()
     {
         port.close();
@@ -88,7 +118,7 @@ class serial_controller
     boost::asio::serial_port port;
 
     template<typename command>
-    inline void send_read_command()
+    void send_command()
     {
         uint8_t buffer[2] = {address, command::CMD};
         boost::asio::write(port, boost::asio::buffer(buffer, 2));

@@ -6,12 +6,14 @@
 
 #include "roboclaw/io/io.h"
 #include "roboclaw/io/read_commands.h"
+#include "roboclaw/io/write_commands.hpp"
 
 namespace po = boost::program_options;
+namespace read_commands = roboclaw::io::read_commands;
+namespace write_commands = roboclaw::io::write_commands;
 
 void read_info(roboclaw::io::serial_controller& controller)
 {
-    namespace read_commands = roboclaw::io::read_commands;
     std::cout << "Firmware version: " << controller.read<read_commands::firmware_version>();
 
     std::cout << "Main battery voltage: " << controller.read<read_commands::main_battery_voltage>() << std::endl;
@@ -56,6 +58,12 @@ void read_info(roboclaw::io::serial_controller& controller)
 
     std::cout << "M1 velocity PID: " << get_string(controller.read<read_commands::m1_velocity_pid>()) << std::endl;
     std::cout << "M2 velocity PID: " << get_string(controller.read<read_commands::m2_velocity_pid>()) << std::endl;
+
+    // Writing
+    controller.write(write_commands::m1_encoder_mode{true, false});
+    controller.write(write_commands::m2_encoder_mode{true, false});
+    std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
+
 }
 
 int main(int argc, char** argv)

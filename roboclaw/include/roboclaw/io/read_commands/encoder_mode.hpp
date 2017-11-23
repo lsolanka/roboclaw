@@ -1,6 +1,6 @@
 #pragma once
 #include <boost/asio.hpp>
-#include "units.hpp"
+#include "../units.hpp"
 
 #include "../crc_calculator.h"
 #include "../io.h"
@@ -33,7 +33,7 @@ struct encoder_mode
         r.enc1.enable_rc_analog = enc1 & 0x80;
 
         auto enc2 = read_value<uint8_t>(port, crc);
-        r.enc1.quadrature = !(enc2 & 0x01);
+        r.enc2.quadrature = !(enc2 & 0x01);
         r.enc2.enable_rc_analog = enc2 & 0x80;
 
         return r;
@@ -45,7 +45,7 @@ std::string get_string(const encoder_mode::return_type& m)
     auto print_one = [] (const std::string& heading, const encoder_mode::return_type::mode& m)
     {
         std::stringstream ss;
-        ss << heading << (m.quadrature ? "quadrature" : "analog")
+        ss << heading << (m.quadrature ? "quadrature" : "absolute")
                       << (m.enable_rc_analog ? ", rc/analog enabled" : "");
         return ss.str(); 
     };
