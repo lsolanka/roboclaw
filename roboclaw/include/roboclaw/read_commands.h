@@ -2,9 +2,28 @@
 
 #include <string>
 #include <boost/asio.hpp>
+#include <boost/units/quantity.hpp>
+#include <boost/units/systems/si/electric_potential.hpp>
+#include <boost/units/systems/si/current.hpp>
+#include <boost/units/systems/temperature/celsius.hpp>
+#include <boost/units/systems/si/io.hpp>
 
 #include "io.h"
 #include "crc_calculator.h"
+
+template <class Units>
+using quantity = boost::units::quantity<Units, float>;
+
+using boost::units::si::electric_potential;
+using boost::units::si::volt;
+using boost::units::si::volts;
+
+using boost::units::si::current;
+using boost::units::si::ampere;
+using boost::units::si::amperes;
+
+using boost::units::celsius::temperature;
+namespace celsius = boost::units::celsius;
 
 namespace roboclaw
 {
@@ -41,14 +60,14 @@ struct firmware_version
 template<uint8_t command_id>
 struct battery_voltage_base
 {
-    using return_type = float;
+    using return_type = quantity<electric_potential>;
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port,
                                      crc_calculator_16& crc)
     {
         uint16_t value = read_value<uint16_t>(port, crc);
-        return value / 10.;
+        return (value / 10.f) * volts;
     }
 };
 using main_battery_voltage = battery_voltage_base<24>;
@@ -76,16 +95,16 @@ struct motor_currents
 {
     struct return_type
     {
-        float m1;
-        float m2;
+        quantity<current> m1;
+        quantity<current> m2;
     };
     static constexpr uint8_t CMD = 49;
 
     static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
     {
         return_type r;
-        r.m1 = read_value<uint16_t>(port, crc) / 100.f;
-        r.m2 = read_value<uint16_t>(port, crc) / 100.f;
+        r.m1 = read_value<uint16_t>(port, crc) / 100.f * amperes;
+        r.m2 = read_value<uint16_t>(port, crc) / 100.f * amperes;
         return r;
     }
 };
@@ -95,16 +114,16 @@ struct battery_voltage_settings_base
 {
     struct return_type
     {
-        float min;
-        float max;
+        quantity<electric_potential> min;
+        quantity<electric_potential> max;
     };
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
     {
         return_type r;
-        r.min = read_value<uint16_t>(port, crc) / 10.f;
-        r.max = read_value<uint16_t>(port, crc) / 10.f;
+        r.min = read_value<uint16_t>(port, crc) / 10.f * volts;
+        r.max = read_value<uint16_t>(port, crc) / 10.f * volts;
         return r;
     }
 };
@@ -114,12 +133,12 @@ using logic_battery_voltage_settings = battery_voltage_settings_base<60>;
 template<uint8_t command_id>
 struct temperature_base
 {
-    using return_type = float;
+    using return_type = quantity<temperature>;
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
     {
-        return read_value<uint16_t>(port, crc) / 10.f;
+        return read_value<uint16_t>(port, crc) / 10.f * celsius::degree;
     }
 };
 using board_temperature_1 = temperature_base<82>;
@@ -245,8 +264,8 @@ struct motor_current_limit
 {
     struct return_type
     {
-        float min;
-        float max;
+        quantity<current> min;
+        quantity<current> max;
     };
 
     static constexpr uint8_t CMD = command_id;
@@ -255,8 +274,8 @@ struct motor_current_limit
     {
         return_type r;
 
-        r.max = read_value<uint32_t>(port, crc) / 100.f;
-        r.min = read_value<uint32_t>(port, crc) / 100.f;
+        r.max = read_value<uint32_t>(port, crc) / 100.f * amperes;
+        r.min = read_value<uint32_t>(port, crc) / 100.f * amperes;
 
         return r;
     }
@@ -440,6 +459,8 @@ std::string get_string(const m2_velocity_pid::return_type& m)
 {
     return get_string<m2_velocity_pid::CMD>(m);
 }
+
+
 
 } // namespace read_commands
 } // namespace io
