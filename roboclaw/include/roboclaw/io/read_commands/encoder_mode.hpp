@@ -25,14 +25,14 @@ struct encoder_mode
         mode enc2;
     };
     static constexpr uint8_t CMD = 91;
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
         return_type r;
-        auto enc1 = read_value<uint8_t>(port, crc);
+        auto enc1 = read_value<uint8_t>(port, crc, strm);
         r.enc1.quadrature = !(enc1 & 0x01);
         r.enc1.enable_rc_analog = enc1 & 0x80;
 
-        auto enc2 = read_value<uint8_t>(port, crc);
+        auto enc2 = read_value<uint8_t>(port, crc, strm);
         r.enc2.quadrature = !(enc2 & 0x01);
         r.enc2.enable_rc_analog = enc2 & 0x80;
 

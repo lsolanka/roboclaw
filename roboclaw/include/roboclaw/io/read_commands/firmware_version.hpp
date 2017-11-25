@@ -16,7 +16,7 @@ struct firmware_version
     using return_type = std::string;
     static constexpr uint8_t CMD = 21;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
        char c;
        std::string result;

@@ -23,12 +23,12 @@ struct encoder_speed_base
 
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
         return_type r;
 
-        r.speed = read_value<uint32_t>(port, crc);
-        r.forward = !(read_value<uint8_t>(port, crc) & 0x01);
+        r.speed = read_value<uint32_t>(port, crc, strm);
+        r.forward = !(read_value<uint8_t>(port, crc, strm) & 0x01);
 
         return r;
     }

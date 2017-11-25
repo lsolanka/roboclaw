@@ -18,9 +18,9 @@ struct temperature_base
     using return_type = quantity<temperature>;
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
-        return read_value<uint16_t>(port, crc) / 10.f * celsius::degree;
+        return read_value<uint16_t>(port, crc, strm) / 10.f * celsius::degree;
     }
 };
 using board_temperature_1 = temperature_base<82>;

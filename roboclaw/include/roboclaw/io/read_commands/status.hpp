@@ -34,9 +34,9 @@ struct status
         unsigned m2_home: 1;
     };
     static constexpr uint8_t CMD = 90;
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
-        auto value = read_value<uint16_t>(port, crc);
+        auto value = read_value<uint16_t>(port, crc, strm);
         return_type r;
 
         r.m1_overcurrent            = value & 0x0001;

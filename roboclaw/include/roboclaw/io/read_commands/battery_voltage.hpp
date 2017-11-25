@@ -19,9 +19,9 @@ struct battery_voltage_base
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port,
-                                     crc_calculator_16& crc)
+                                     crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
-        uint16_t value = read_value<uint16_t>(port, crc);
+        uint16_t value = read_value<uint16_t>(port, crc, strm);
         return (value / 10.f) * volts;
     }
 };

@@ -22,11 +22,11 @@ struct battery_voltage_settings_base
     };
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
         return_type r;
-        r.min = read_value<uint16_t>(port, crc) / 10.f * volts;
-        r.max = read_value<uint16_t>(port, crc) / 10.f * volts;
+        r.min = read_value<uint16_t>(port, crc, strm) / 10.f * volts;
+        r.max = read_value<uint16_t>(port, crc, strm) / 10.f * volts;
         return r;
     }
 };

@@ -24,14 +24,14 @@ struct motor_pid_base
     };
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
         return_type r;
 
-        r.p = read_value<uint32_t>(port, crc) / 65536.f;
-        r.i = read_value<uint32_t>(port, crc) / 65536.f;
-        r.d = read_value<uint32_t>(port, crc) / 65536.f;
-        r.qpps = read_value<uint32_t>(port, crc);
+        r.p = read_value<uint32_t>(port, crc, strm) / 65536.f;
+        r.i = read_value<uint32_t>(port, crc, strm) / 65536.f;
+        r.d = read_value<uint32_t>(port, crc, strm) / 65536.f;
+        r.qpps = read_value<uint32_t>(port, crc, strm);
 
         return r;
     }

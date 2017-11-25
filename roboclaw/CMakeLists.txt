@@ -9,13 +9,14 @@ HunterGate(
 
 project(roboclaw VERSION 0.1.0 LANGUAGES C CXX)
 
-hunter_add_package(Boost COMPONENTS program_options system)
+hunter_add_package(Boost COMPONENTS program_options system log)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Boost REQUIRED COMPONENTS program_options system)
+find_package(Boost CONFIG REQUIRED COMPONENTS program_options system log thread)
 
 include_directories(include)
 
 add_executable(${PROJECT_NAME}_test src/main.cpp)
-target_link_libraries(${PROJECT_NAME}_test Boost::system Boost::program_options)
+target_link_libraries(${PROJECT_NAME}_test
+    Boost::system Boost::program_options Boost::log Boost::system Boost::thread)

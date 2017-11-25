@@ -21,11 +21,11 @@ struct motor_currents
     };
     static constexpr uint8_t CMD = 49;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc)
+    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
     {
         return_type r;
-        r.m1 = read_value<uint16_t>(port, crc) / 100.f * amperes;
-        r.m2 = read_value<uint16_t>(port, crc) / 100.f * amperes;
+        r.m1 = read_value<uint16_t>(port, crc, strm) / 100.f * amperes;
+        r.m2 = read_value<uint16_t>(port, crc, strm) / 100.f * amperes;
         return r;
     }
 };

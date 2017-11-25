@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 #include <boost/asio/serial_port.hpp>
 
+#include <roboclaw/logging.hpp>
 #include "roboclaw/io/io.h"
 #include "roboclaw/io/read_commands.h"
 #include "roboclaw/io/write_commands.hpp"
@@ -62,12 +63,26 @@ void read_info(roboclaw::io::serial_controller& controller)
     // Writing
     controller.write(write_commands::m1_encoder_mode{true, false});
     controller.write(write_commands::m2_encoder_mode{true, false});
-    std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
 
+    while (true)
+    {
+        std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
+    }
+}
+
+BOOST_LOG_GLOBAL_LOGGER_INIT(logger, logger_t)
+{
+    logger_t lg;
+    boost::log::add_common_attributes();
+    return lg;
 }
 
 int main(int argc, char** argv)
 {
+    boost::log::core::get()->set_filter(
+            boost::log::trivial::severity >= debug
+    );
+
     std::string port_name;
     int speed;
 

@@ -21,10 +21,11 @@ struct encoder_mode_base
 
     static constexpr uint8_t CMD = command_id;
 
-    bool write(boost::asio::serial_port& port, crc_calculator_16& crc) const
+    bool write(boost::asio::serial_port& port, crc_calculator_16& crc,
+               boost::log::record_ostream& strm) const
     {
         uint8_t mode = (!quadrature) | (enable_rc_analog << 7);
-        write_value(mode, port, crc);
+        write_value(mode, port, crc, strm);
         return true;
     }
 };
