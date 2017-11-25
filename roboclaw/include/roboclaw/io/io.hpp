@@ -130,7 +130,7 @@ class serial_controller
 
         uint8_t response;
         boost::asio::read(port, boost::asio::buffer(&response, 1));
-        strm << "; recv data: " << +response;
+        strm << "; recv: " << +response;
 
         strm.flush();
         if (rec) lg.push_record(std::move(rec));
