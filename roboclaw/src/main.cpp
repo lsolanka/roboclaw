@@ -64,16 +64,30 @@ void read_info(roboclaw::io::serial_controller& controller)
     controller.write(write_commands::m1_encoder_mode{true, false});
     controller.write(write_commands::m2_encoder_mode{true, false});
 
-    while (true)
-    {
-        std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
-    }
+    std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
 }
 
 BOOST_LOG_GLOBAL_LOGGER_INIT(logger, logger_t)
 {
+    namespace expr = boost::log::expressions;
     logger_t lg;
     boost::log::add_common_attributes();
+    boost::log::add_file_log(
+                boost::log::keywords::file_name = "log.txt",
+                boost::log::keywords::format = (
+                        expr::stream << expr::format_date_time<     boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S")
+                        << " [" << expr::attr<     boost::log::trivial::severity_level >("Severity") << "] "
+                        << expr::smessage
+            )
+    );
+    boost::log::add_console_log(
+                std::cout,
+                boost::log::keywords::format = (
+                        expr::stream << expr::format_date_time<     boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S")
+                        << " [" << expr::attr<     boost::log::trivial::severity_level >("Severity") << "] "
+                        << expr::smessage
+            )
+    );
     return lg;
 }
 

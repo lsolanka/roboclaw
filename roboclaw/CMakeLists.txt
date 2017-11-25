@@ -13,10 +13,11 @@ hunter_add_package(Boost COMPONENTS program_options system log)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Boost CONFIG REQUIRED COMPONENTS program_options system log thread)
+find_package(Boost CONFIG REQUIRED
+    COMPONENTS program_options system log filesystem thread)
 
 include_directories(include)
 
 add_executable(${PROJECT_NAME}_test src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_test
-    Boost::system Boost::program_options Boost::log Boost::system Boost::thread)
+    Boost::system Boost::program_options Boost::log Boost::filesystem Boost::system Boost::thread)
