@@ -5,6 +5,7 @@
 
 #include "../crc_calculator.hpp"
 #include "../io.hpp"
+#include "../types.hpp"
 
 namespace roboclaw
 {
@@ -14,12 +15,15 @@ namespace write_commands
 {
 
 template<uint8_t command_id>
-struct encoder_mode_base
+struct encoder_mode_base : public roboclaw::io::encoder_mode
 {
-    uint8_t quadrature : 1;
-    uint8_t enable_rc_analog : 1;
-
     static constexpr uint8_t CMD = command_id;
+
+    encoder_mode_base() {}
+
+    encoder_mode_base(uint8_t quadrature, uint8_t enable_rc_analog)
+        : roboclaw::io::encoder_mode{quadrature, enable_rc_analog}
+    {}
 
     bool write(boost::asio::serial_port& port, crc_calculator_16& crc,
                boost::log::record_ostream& strm) const

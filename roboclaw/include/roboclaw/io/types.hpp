@@ -50,8 +50,8 @@ inline std::string get_string(const roboclaw::io::encoder_count& m)
 
 struct encoder_mode
 {
-    unsigned quadrature : 1;
-    unsigned enable_rc_analog : 1;
+    uint8_t quadrature : 1;
+    uint8_t enable_rc_analog : 1;
 };
 
 struct encoder_mode_1_2
