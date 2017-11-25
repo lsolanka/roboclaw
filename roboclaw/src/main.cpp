@@ -5,9 +5,9 @@
 #include <boost/asio/serial_port.hpp>
 
 #include <roboclaw/logging.hpp>
-#include "roboclaw/io/io.h"
-#include "roboclaw/io/read_commands.h"
-#include "roboclaw/io/write_commands.hpp"
+#include <roboclaw/io/io.hpp>
+#include <roboclaw/io/read_commands.hpp>
+#include <roboclaw/io/write_commands.hpp>
 
 namespace po = boost::program_options;
 namespace read_commands = roboclaw::io::read_commands;

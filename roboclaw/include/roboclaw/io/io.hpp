@@ -10,7 +10,7 @@
 #include <boost/endian/conversion.hpp>
 
 #include <roboclaw/logging.hpp>
-#include "crc_calculator.h"
+#include <roboclaw/io/crc_calculator.hpp>
 
 namespace roboclaw
 {

@@ -2,8 +2,8 @@
 #include <boost/asio.hpp>
 #include "../units.hpp"
 
-#include "../crc_calculator.h"
-#include "../io.h"
+#include "../crc_calculator.hpp"
+#include "../io.hpp"
 
 namespace roboclaw
 {
