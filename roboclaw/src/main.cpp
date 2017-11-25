@@ -64,7 +64,15 @@ void read_info(roboclaw::io::serial_controller& controller)
     controller.write(write_commands::m1_encoder_mode{true, false});
     controller.write(write_commands::m2_encoder_mode{true, false});
 
-    std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
+    //while (true)
+        std::cout << "Encoder mode: " << get_string(controller.read<read_commands::encoder_mode>()) << std::endl;
+
+    write_commands::m1_velocity_pid m1_pid;
+    m1_pid.p = 1.f;
+    m1_pid.i = 0;
+    m1_pid.d = 0;
+    m1_pid.qpps = 42000;
+    controller.write(m1_pid);
 }
 
 BOOST_LOG_GLOBAL_LOGGER_INIT(logger, logger_t)

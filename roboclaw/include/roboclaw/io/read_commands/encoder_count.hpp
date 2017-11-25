@@ -4,6 +4,7 @@
 
 #include "../crc_calculator.hpp"
 #include "../io.hpp"
+#include "../types.hpp"
 
 namespace roboclaw
 {
@@ -15,57 +16,21 @@ namespace read_commands
 template<uint8_t command_id>
 struct encoder_count_base
 {
-    struct return_type
-    {
-        uint16_t count;
-        struct _status
-        {
-            uint8_t underflow : 1;
-            uint8_t overflow : 1;
-            uint8_t forward : 1;
-        } status;
-    };
-
+    using return_type = roboclaw::io::encoder_count;
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
-    {
-        return_type r;
-
-        r.count = read_value<uint32_t>(port, crc, strm);
-
-        auto status = read_value<uint8_t>(port, crc, strm);
-        r.status.underflow = status & 0x01;
-        r.status.forward = !(status & 0x02);
-        r.status.overflow = status & 0x04;
-
-        return r;
-    }
-
+    static return_type read_response(boost::asio::serial_port& port,
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm);
 };
-using m1_encoder_count = encoder_count_base<16>;
-using m2_encoder_count = encoder_count_base<17>;
 
-template<typename T>
-std::string _get_encoder_count_string(const typename T::return_type& m)
-{
-    std::stringstream ss;
-    ss << "count: " << m.count << " ["
-       << (m.status.underflow ? "underflow," : "")
-       << (m.status.overflow ? "overflow," : "")
-       << (m.status.forward ? "forward" : "backward")
-       << "]";
+static constexpr uint8_t M1_ENCODER_COUNT_CMD = 16;
+static constexpr uint8_t M2_ENCODER_COUNT_CMD = 17;
+using m1_encoder_count = encoder_count_base<M1_ENCODER_COUNT_CMD>;
+using m2_encoder_count = encoder_count_base<M2_ENCODER_COUNT_CMD>;
 
-    return ss.str();
-}
-std::string get_string(const m1_encoder_count::return_type& m)
-{
-    return _get_encoder_count_string<m1_encoder_count>(m);
-}
-std::string get_string(const m2_encoder_count::return_type& m)
-{
-    return _get_encoder_count_string<m2_encoder_count>(m);
-}
+extern template struct encoder_count_base<M1_ENCODER_COUNT_CMD>;
+extern template struct encoder_count_base<M2_ENCODER_COUNT_CMD>;
 
 }
 }

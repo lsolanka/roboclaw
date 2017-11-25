@@ -17,14 +17,14 @@ namespace roboclaw
 namespace io
 {
 
-uint16_t read_crc(boost::asio::serial_port& port)
+inline uint16_t read_crc(boost::asio::serial_port& port)
 {
     uint16_t value;
     boost::asio::read(port, boost::asio::buffer(&value, 2));
     return boost::endian::big_to_native(value);
 }
 
-void write_crc(boost::asio::serial_port& port, uint16_t crc)
+inline void write_crc(boost::asio::serial_port& port, uint16_t crc)
 {
     boost::endian::native_to_big_inplace(crc);
     boost::asio::write(port, boost::asio::buffer(&crc, 2));
@@ -33,6 +33,7 @@ void write_crc(boost::asio::serial_port& port, uint16_t crc)
 template<typename T>
 T read_value(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
 {
+    static_assert(std::is_integral<T>(), "read_value() can only process integral types");
     T value;
     boost::asio::read(port, boost::asio::buffer(&value, sizeof(T)));
     crc << value;
@@ -45,6 +46,7 @@ template<typename T>
 void write_value(T value, boost::asio::serial_port& port, crc_calculator_16& crc,
                  boost::log::record_ostream& strm)
 {
+    static_assert(std::is_integral<T>(), "write_value() can only process integral types");
     strm << " " << +value;
     boost::endian::native_to_big_inplace(value);
     boost::asio::write(port, boost::asio::buffer(&value, sizeof(T)));
