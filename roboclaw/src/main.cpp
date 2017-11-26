@@ -1,5 +1,9 @@
 #include <string>
 #include <iostream>
+#include <chrono>
+#include <thread>
+#include <csignal>
+#include <atomic>
 
 #include <boost/program_options.hpp>
 #include <boost/asio/serial_port.hpp>
@@ -12,6 +16,26 @@
 namespace po = boost::program_options;
 namespace read_commands = roboclaw::io::read_commands;
 namespace write_commands = roboclaw::io::write_commands;
+using roboclaw::io::serial_controller;
+
+volatile std::atomic<bool> interruption_requested(false);
+
+void signal_handler(int signal)
+{
+    if (signal == SIGINT)
+    {
+        interruption_requested = true;
+    }
+}
+
+void interruption_point(serial_controller& controller)
+{
+    if (interruption_requested)
+    {
+        controller.write(write_commands::m1_m2_drive_duty{0});
+        exit(EXIT_SUCCESS);
+    }
+}
 
 void read_info(roboclaw::io::serial_controller& controller)
 {
@@ -153,8 +177,8 @@ int main(int argc, char** argv)
         ("verbosity,v", po::value<std::string>(&verbosity)->default_value("disabled"), "Verbosity level [trace, debug, info, warning, error, fatal]")
         ("port,p", po::value<std::string>(&port_name)->default_value("/dev/ttyACM0"),
             "Serial port to use to connect to roboclaw")
-        ("speed,s", po::value<int>(&speed)->default_value(0), "Speed of the motors")
-        ("duty,d", po::value<float>(&duty)->default_value(0), "Drive motors with duty cycle [-1, 1]");
+        ("speed,s", po::value<int>(&speed), "Drive motors with qpps.")
+        ("duty,d", po::value<float>(&duty), "Drive motors with duty cycle [-1, 1]");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -169,13 +193,36 @@ int main(int argc, char** argv)
         std::cout << desc;
         return EXIT_FAILURE;
     }
+    if (vm.count("speed") && vm.count("duty"))
+    {
+        std::cerr << "Select either 'speed (-s)', or 'duty (-d)', but not both"
+                  << std::endl;
+        return EXIT_FAILURE;
+    }
 
     roboclaw::io::serial_controller controller(port_name, 0x80);
     read_info(controller);
 
-    //controller.write(write_commands::m1_drive_duty{duty}); 
-    //controller.write(write_commands::m2_drive_duty{duty}); 
-    controller.write(write_commands::m1_m2_drive_duty(duty));
+    if (vm.count("duty"))
+    {
+        //controller.write(write_commands::m1_drive_duty{duty}); 
+        //controller.write(write_commands::m2_drive_duty{duty}); 
+        controller.write(write_commands::m1_m2_drive_duty(duty));
+    }
+    if (vm.count("speed"))
+    {
+        std::signal(SIGINT, signal_handler);
+        while (true)
+        {
+            //controller.write(write_commands::m1_drive_qpps{speed}); 
+            //controller.write(write_commands::m2_drive_qpps{-speed}); 
+            controller.write(write_commands::m1_m2_drive_qpps{speed});
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            speed = -speed;
+            interruption_point(controller);
+        }
+    }
 
     return EXIT_SUCCESS;
 }
