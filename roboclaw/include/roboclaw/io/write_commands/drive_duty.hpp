@@ -22,29 +22,34 @@ struct drive_duty_base
 
     static constexpr uint8_t CMD = command_id;
 
-    drive_duty_base(float duty) : duty_cycle(duty)
-    {
-        if (duty_cycle < -1.f || duty_cycle > 1.f)
-        {
-            BOOST_LOG_TRIVIAL(error) << "command: " << +uint8_t(CMD) <<
-                ": invalid duty cycle value: " << duty_cycle
-                << ". Duty cycle will be set to range [-1, 1].";
-        }
-        duty_cycle = std::max(std::min(duty_cycle, 1.f), -1.f);
-    }
+    drive_duty_base(float duty);
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const
-    {
-
-        int32_t value = duty_cycle * 32767.f;
-        value = std::max(std::min(value, 32767), -32767);
-        write_value(int16_t(value), port, crc, strm);
-    }
+               boost::log::record_ostream& strm) const;
 };
 
 using m1_drive_duty = drive_duty_base<32>;
 using m2_drive_duty = drive_duty_base<33>;
+
+extern template struct drive_duty_base<32>;
+extern template struct drive_duty_base<33>;
+
+struct m1_m2_drive_duty
+{
+    float m1_duty;
+    float m2_duty;
+
+    static constexpr uint8_t CMD = 34;
+
+    m1_m2_drive_duty(float m1, float m2) { init_duty(m1, m2); }
+    m1_m2_drive_duty(float m1_m2_duty) { init_duty(m1_m2_duty, m1_m2_duty); }
+
+    void init_duty(float m1, float m2);
+
+    void write(boost::asio::serial_port& port, crc_calculator_16& crc,
+               boost::log::record_ostream& strm) const;
+};
+
 }
 }
 }

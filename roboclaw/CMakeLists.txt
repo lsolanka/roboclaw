@@ -23,6 +23,7 @@ set(READ_CMD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/roboclaw/io/read_commands)
 
 set (ROBOCLAW_SRC_FILES
     ${WRITE_CMD_SRC_DIR}/motor_velocity_pid.cpp
+    ${WRITE_CMD_SRC_DIR}/drive_duty.cpp
     ${READ_CMD_SRC_DIR}/status.cpp
     ${READ_CMD_SRC_DIR}/encoder_count.cpp
     ${READ_CMD_SRC_DIR}/encoder_mode.cpp

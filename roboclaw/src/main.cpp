@@ -173,8 +173,9 @@ int main(int argc, char** argv)
     roboclaw::io::serial_controller controller(port_name, 0x80);
     read_info(controller);
 
-    controller.write(write_commands::m1_drive_duty{duty}); 
-    controller.write(write_commands::m2_drive_duty{duty}); 
+    //controller.write(write_commands::m1_drive_duty{duty}); 
+    //controller.write(write_commands::m2_drive_duty{duty}); 
+    controller.write(write_commands::m1_m2_drive_duty(duty));
 
     return EXIT_SUCCESS;
 }
