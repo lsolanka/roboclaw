@@ -216,7 +216,7 @@ int main(int argc, char** argv)
         {
             //controller.write(write_commands::m1_drive_qpps{speed}); 
             //controller.write(write_commands::m2_drive_qpps{-speed}); 
-            controller.write(write_commands::m1_m2_drive_qpps{speed});
+            controller.write(write_commands::m1_m2_drive_qpps{speed, -speed});
 
             std::this_thread::sleep_for(std::chrono::seconds(2));
             speed = -speed;
