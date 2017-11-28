@@ -2,6 +2,7 @@
 #include "ui_roboclawmain.h"
 
 #include <roboclaw/io/read_commands.hpp>
+#include <roboclaw/io/types.hpp>
 
 namespace read_commands = roboclaw::io::read_commands;
 
@@ -35,7 +36,7 @@ RoboclawMain::RoboclawMain(QWidget *parent) :
     controller("/dev/ttyACM0", 0x80)
 {
     ui->setupUi(this);
-    setFixedSize(minimumSizeHint().width(), minimumSizeHint().height());
+    //setFixedSize(minimumSizeHint().width(), minimumSizeHint().height());
 
     QTimer* controllerInfoTimer = new QTimer(this);
     QObject::connect(controllerInfoTimer, &QTimer::timeout,
@@ -53,10 +54,42 @@ void RoboclawMain::updateSerialData()
     ui->firmwareVersionEdit->setText(QString::fromStdString(
                     controller.read<read_commands::firmware_version>()));
 
+    // Board temperature
     ui->t1Edit->setText(QString::fromStdString(
                 read_commands::get_string(
                     controller.read<read_commands::board_temperature_1>())));
     ui->t2Edit->setText(QString::fromStdString(
                 read_commands::get_string(
                     controller.read<read_commands::board_temperature_2>())));
+
+    // Battery voltage
+    ui->mainBattVoltageEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(
+                    controller.read<read_commands::main_battery_voltage>())));
+    ui->logicBattVoltageEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(
+                    controller.read<read_commands::logic_battery_voltage>())));
+
+    // Encoders
+    ui->m1EncEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(
+                    controller.read<read_commands::m1_encoder_count>())));
+    ui->m2EncEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(
+                    controller.read<read_commands::m2_encoder_count>())));
+
+    // Motor Amps
+    auto motor_amps = controller.read<read_commands::motor_currents>();
+    ui->m1AmpsEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(motor_amps.m1)));
+    ui->m2AmpsEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(motor_amps.m2)));
+
+    // Motor speed
+    auto motor_speed = controller.read<read_commands::motor_instantaneous_speed>();
+    ui->m1SpeedEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(motor_speed.m1)));
+    ui->m2SpeedEdit->setText(QString::fromStdString(
+                roboclaw::io::get_string(motor_speed.m2)));
+
 }

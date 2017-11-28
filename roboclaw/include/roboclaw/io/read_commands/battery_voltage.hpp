@@ -1,5 +1,6 @@
 #pragma once
 #include <boost/asio.hpp>
+#include <boost/log/trivial.hpp>
 #include "../units.hpp"
 
 #include "../crc_calculator.hpp"
@@ -29,5 +30,6 @@ using main_battery_voltage = battery_voltage_base<24>;
 using logic_battery_voltage = battery_voltage_base<25>;
 
 }
+
 }
 }

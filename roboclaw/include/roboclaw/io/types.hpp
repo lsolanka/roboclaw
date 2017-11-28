@@ -8,6 +8,16 @@ namespace roboclaw
 namespace io
 {
 
+template<typename T>
+std::string get_string(const T& value)
+{
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
+/* ------------------------------------------------------------------------- */
+
 struct pid_values
 {
     float p;
@@ -25,7 +35,7 @@ inline std::string get_string(const pid_values& v)
 
 struct encoder_count
 {
-    uint16_t count;
+    uint32_t count;
     struct _status
     {
         uint8_t underflow : 1;
@@ -76,7 +86,6 @@ inline std::string get_string(const encoder_mode_1_2& m)
 
     return result;
 }
-
 
 } /* io */ 
 } /* roboclaw */ 
