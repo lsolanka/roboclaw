@@ -1,5 +1,8 @@
 #pragma once
+#include <string>
+#include <sstream>
 #include <boost/asio.hpp>
+#include <boost/log/trivial.hpp>
 #include "../units.hpp"
 
 #include "../crc_calculator.hpp"
@@ -25,6 +28,13 @@ struct temperature_base
 };
 using board_temperature_1 = temperature_base<82>;
 using board_temperature_2 = temperature_base<83>;
+
+std::string get_string(const quantity<temperature>& t)
+{
+    std::stringstream ss;
+    ss << t;
+    return ss.str();
+}
 
 }
 }

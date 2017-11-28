@@ -1,8 +1,6 @@
 find_package(Boost CONFIG REQUIRED
     COMPONENTS program_options system log filesystem thread)
 
-include_directories(include)
-
 set(WRITE_CMD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/roboclaw/io/write_commands)
 set(READ_CMD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/roboclaw/io/read_commands)
 
@@ -21,6 +19,10 @@ set (ROBOCLAW_SRC_FILES
 add_library(roboclaw ${ROBOCLAW_SRC_FILES})
 target_link_libraries(roboclaw
     Boost::system Boost::program_options Boost::log Boost::filesystem Boost::system Boost::thread)
+target_include_directories(roboclaw PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 add_executable(${PROJECT_NAME}_test src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_test roboclaw)
