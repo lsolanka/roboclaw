@@ -19,6 +19,9 @@ public:
 
 public slots:
     void updateSerialData();
+    void stopAll();
+    void changeM1Duty(int value);
+    void changeM2Duty(int value);
 
 private:
     Ui::RoboclawMain *ui;

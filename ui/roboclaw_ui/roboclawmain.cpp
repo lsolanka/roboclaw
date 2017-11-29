@@ -2,9 +2,11 @@
 #include "ui_roboclawmain.h"
 
 #include <roboclaw/io/read_commands.hpp>
+#include <roboclaw/io/write_commands.hpp>
 #include <roboclaw/io/types.hpp>
 
 namespace read_commands = roboclaw::io::read_commands;
+namespace write_commands = roboclaw::io::write_commands;
 
 BOOST_LOG_GLOBAL_LOGGER_INIT(logger, logger_t)
 {
@@ -36,17 +38,38 @@ RoboclawMain::RoboclawMain(QWidget *parent) :
     controller("/dev/ttyACM0", 0x80)
 {
     ui->setupUi(this);
-    //setFixedSize(minimumSizeHint().width(), minimumSizeHint().height());
+
+    connect(ui->stopAllButton, SIGNAL(pressed()), this, SLOT(stopAll()));
+    connect(ui->m1DutySlider, SIGNAL(sliderMoved(int)), this, SLOT(changeM1Duty(int)));
+    connect(ui->m2DutySlider, SIGNAL(sliderMoved(int)), this, SLOT(changeM2Duty(int)));
 
     QTimer* controllerInfoTimer = new QTimer(this);
     QObject::connect(controllerInfoTimer, &QTimer::timeout,
                      this, &RoboclawMain::updateSerialData);
     controllerInfoTimer->start(500);
+
 }
 
 RoboclawMain::~RoboclawMain()
 {
     delete ui;
+}
+
+void RoboclawMain::stopAll()
+{
+    controller.write(write_commands::m1_m2_drive_duty{0});
+    ui->m1DutySlider->setValue(0);
+    ui->m2DutySlider->setValue(0);
+}
+
+void RoboclawMain::changeM1Duty(int value)
+{
+    controller.write(write_commands::m1_drive_duty{value / 100.f});
+}
+
+void RoboclawMain::changeM2Duty(int value)
+{
+    controller.write(write_commands::m2_drive_duty{value / 100.f});
 }
 
 void RoboclawMain::updateSerialData()
