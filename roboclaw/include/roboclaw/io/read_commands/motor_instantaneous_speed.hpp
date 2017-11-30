@@ -16,8 +16,8 @@ struct motor_instantaneous_speed
 {
     struct return_type
     {
-        uint32_t m1;
-        uint32_t m2;
+        int32_t m1;
+        int32_t m2;
     };
     static constexpr uint8_t CMD = 79;
 

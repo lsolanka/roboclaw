@@ -14,8 +14,8 @@ motor_instantaneous_speed::read_response(boost::asio::serial_port& port,
 {
     return_type r;
 
-    r.m1 = read_value<uint32_t>(port, crc, strm);
-    r.m2 = read_value<uint32_t>(port, crc, strm);
+    r.m1 = read_value<int32_t>(port, crc, strm);
+    r.m2 = read_value<int32_t>(port, crc, strm);
 
     return r;
 }

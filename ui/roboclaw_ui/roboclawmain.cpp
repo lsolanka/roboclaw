@@ -40,14 +40,18 @@ RoboclawMain::RoboclawMain(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->stopAllButton, SIGNAL(pressed()), this, SLOT(stopAll()));
-    connect(ui->m1DutySlider, SIGNAL(sliderMoved(int)), this, SLOT(changeM1Duty(int)));
-    connect(ui->m2DutySlider, SIGNAL(sliderMoved(int)), this, SLOT(changeM2Duty(int)));
+    connect(ui->m1DutySlider, SIGNAL(valueChanged(int)), this, SLOT(changeM1Duty(int)));
+    connect(ui->m2DutySlider, SIGNAL(valueChanged(int)), this, SLOT(changeM2Duty(int)));
+    connect(ui->m1PidSlider, SIGNAL(valueChanged(int)), this, SLOT(changeM1Pid(int)));
+    connect(ui->m2PidSlider, SIGNAL(valueChanged(int)), this, SLOT(changeM2Pid(int)));
 
     QTimer* controllerInfoTimer = new QTimer(this);
     QObject::connect(controllerInfoTimer, &QTimer::timeout,
                      this, &RoboclawMain::updateSerialData);
     controllerInfoTimer->start(500);
 
+    controller.write(write_commands::m1_velocity_pid{1.f, 0.5f, 0.25f, QPPS_PER_SECOND});
+    controller.write(write_commands::m2_velocity_pid{1.f, 0.5f, 0.25f, QPPS_PER_SECOND});
 }
 
 RoboclawMain::~RoboclawMain()
@@ -55,21 +59,46 @@ RoboclawMain::~RoboclawMain()
     delete ui;
 }
 
+void RoboclawMain::clearAllSliders()
+{
+    ui->m1DutySlider->setValue(0);
+    ui->m2DutySlider->setValue(0);
+    ui->m1PidSlider->setValue(0);
+    ui->m2PidSlider->setValue(0);
+}
+
 void RoboclawMain::stopAll()
 {
     controller.write(write_commands::m1_m2_drive_duty{0});
-    ui->m1DutySlider->setValue(0);
-    ui->m2DutySlider->setValue(0);
+    clearAllSliders();
 }
 
 void RoboclawMain::changeM1Duty(int value)
 {
-    controller.write(write_commands::m1_drive_duty{value / 100.f});
+    float duty_value = value / 100.f;
+    controller.write(write_commands::m1_drive_duty{duty_value});
+    ui->m1DutySliderValue->setText(QString::number(duty_value));
 }
 
 void RoboclawMain::changeM2Duty(int value)
 {
-    controller.write(write_commands::m2_drive_duty{value / 100.f});
+    float duty_value = value / 100.f;
+    controller.write(write_commands::m2_drive_duty{duty_value});
+    ui->m2DutySliderValue->setText(QString::number(duty_value));
+}
+
+void RoboclawMain::changeM1Pid(int value)
+{
+    int32_t pid_value = int32_t(value / 100.f * QPPS_PER_SECOND);
+    controller.write(write_commands::m1_drive_qpps{pid_value});
+    ui->m1PidSliderValue->setText(QString::number(pid_value));
+}
+
+void RoboclawMain::changeM2Pid(int value)
+{
+    int32_t pid_value = int32_t(value / 100.f * QPPS_PER_SECOND);
+    controller.write(write_commands::m2_drive_qpps{pid_value});
+    ui->m2PidSliderValue->setText(QString::number(pid_value));
 }
 
 void RoboclawMain::updateSerialData()
