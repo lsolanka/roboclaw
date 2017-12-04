@@ -26,3 +26,8 @@ target_include_directories(roboclaw PUBLIC
 
 add_executable(${PROJECT_NAME}_test src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_test roboclaw)
+
+add_executable(read_serial src/read_serial.cpp)
+target_link_libraries(read_serial Boost::system Boost::thread)
+
+install(TARGETS ${PROJECT_NAME}_test read_serial DESTINATION bin/)
