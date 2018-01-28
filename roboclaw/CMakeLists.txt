@@ -37,3 +37,7 @@ install(TARGETS roboclaw
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
 )
+
+install(DIRECTORY include/roboclaw/
+    DESTINATION include/roboclaw
+    FILES_MATCHING PATTERN "*.hpp")
