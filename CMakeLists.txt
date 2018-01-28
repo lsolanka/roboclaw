@@ -12,7 +12,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_UI "Include the QT Test UI in the build" OFF)
 
-hunter_add_package(Boost COMPONENTS program_options system log)
+hunter_add_package(Boost COMPONENTS program_options system log filesystem
+                                    thread)
 
 add_subdirectory(roboclaw)
 if (BUILD_UI)

@@ -2,7 +2,8 @@
 # Defines the following imported targets:
 #   roboclaw::roboclaw
 
-find_package(Boost CONFIG REQUIRED COMPONENTS program_options system log)
+find_package(Boost CONFIG REQUIRED COMPONENTS program_options system log
+                                              filesystem thread)
 
 if(NOT TARGET roboclaw AND NOT roboclaw_BINARY_DIR)
     include("${CMAKE_CURRENT_LIST_DIR}/roboclawTargets.cmake")
