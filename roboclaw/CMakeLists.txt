@@ -31,3 +31,9 @@ add_executable(read_serial src/read_serial.cpp)
 target_link_libraries(read_serial Boost::system Boost::thread)
 
 install(TARGETS ${PROJECT_NAME}_test read_serial DESTINATION bin/)
+
+install(TARGETS roboclaw
+    EXPORT roboclawTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)

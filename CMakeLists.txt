@@ -18,3 +18,22 @@ add_subdirectory(roboclaw)
 if (BUILD_UI)
     add_subdirectory(ui/roboclaw_ui)
 endif()
+
+# Packaging
+include(CMakePackageConfigHelpers)
+
+configure_file(cmake/${PROJECT_NAME}Config.cmake.in
+               ${PROJECT_NAME}Config.cmake
+               @ONLY)
+
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    COMPATIBILITY ExactVersion)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+        DESTINATION lib/cmake/${PROJECT_NAME})
+
+install(EXPORT ${PROJECT_NAME}Targets
+    DESTINATION lib/cmake/${PROJECT_NAME}
+    NAMESPACE roboclaw::)
