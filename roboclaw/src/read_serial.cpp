@@ -5,7 +5,13 @@ namespace asio = boost::asio;
 
 int main(int argc, char* argv[])
 {
-    const char port_name[] = "/dev/ttyACM0";
+    if (argc != 2)
+    {
+        std::cerr << "read_serial <port_name>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    const char *port_name = argv[1];
 
     boost::asio::io_service io_service;
     boost::asio::serial_port port(io_service);
