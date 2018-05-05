@@ -3,10 +3,10 @@
 #include <boost/asio.hpp>
 #include "../units.hpp"
 
-#include "../types.hpp"
+#include "../../logging.hpp"
 #include "../crc_calculator.hpp"
 #include "../io.hpp"
-#include "../../logging.hpp"
+#include "../types.hpp"
 
 namespace roboclaw
 {
@@ -14,7 +14,6 @@ namespace io
 {
 namespace write_commands
 {
-
 template<uint8_t command_id>
 struct drive_duty_base
 {
@@ -50,7 +49,6 @@ struct m1_m2_drive_duty
                boost::log::record_ostream& strm) const;
 };
 
-}
-}
-}
-
+}  // namespace write_commands
+}  // namespace io
+}  // namespace roboclaw

@@ -6,11 +6,10 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
-roboclaw::io::pid_values
-motor_pid_base<command_id>::read_response(boost::asio::serial_port& port,
-        crc_calculator_16& crc, boost::log::record_ostream& strm)
+roboclaw::io::pid_values motor_pid_base<command_id>::read_response(
+        boost::asio::serial_port& port, crc_calculator_16& crc,
+        boost::log::record_ostream& strm)
 {
     return_type r;
 
@@ -25,6 +24,6 @@ motor_pid_base<command_id>::read_response(boost::asio::serial_port& port,
 template struct motor_pid_base<55>;
 template struct motor_pid_base<56>;
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <cstdint>
+#include <iostream>
 #include <string>
 #include <type_traits>
 
@@ -9,14 +9,10 @@ namespace roboclaw
 {
 namespace io
 {
-
 class crc_calculator_16
 {
   public:
-    crc_calculator_16()
-        : crc(0)
-    {
-    }
+    crc_calculator_16() : crc(0) {}
 
     template<typename T>
     crc_calculator_16& operator<<(const T& data)
@@ -32,7 +28,6 @@ class crc_calculator_16
     {
         return add_buffer((const unsigned char*)s.c_str(), s.size() + 1);
     }
-
 
     crc_calculator_16& add_buffer(const unsigned char* buffer, int size)
     {
@@ -51,7 +46,7 @@ class crc_calculator_16
                 }
             }
         }
-        
+
         return *this;
     }
 
@@ -61,5 +56,5 @@ class crc_calculator_16
     uint16_t crc;
 };
 
-}
-}
+}  // namespace io
+}  // namespace roboclaw

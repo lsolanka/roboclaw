@@ -11,7 +11,6 @@ namespace io
 {
 namespace read_commands
 {
-
 struct motor_currents
 {
     struct return_type
@@ -21,7 +20,9 @@ struct motor_currents
     };
     static constexpr uint8_t CMD = 49;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
+    static return_type read_response(boost::asio::serial_port& port,
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm)
     {
         return_type r;
         r.m1 = read_value<uint16_t>(port, crc, strm) / 100.f * amperes;
@@ -30,6 +31,6 @@ struct motor_currents
     }
 };
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

@@ -6,7 +6,6 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
 typename encoder_count_base<command_id>::return_type
 encoder_count_base<command_id>::read_response(boost::asio::serial_port& port,
@@ -27,6 +26,6 @@ encoder_count_base<command_id>::read_response(boost::asio::serial_port& port,
 
 template struct encoder_count_base<M1_ENCODER_COUNT_CMD>;
 template struct encoder_count_base<M2_ENCODER_COUNT_CMD>;
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

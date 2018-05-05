@@ -11,7 +11,6 @@ namespace io
 {
 namespace read_commands
 {
-
 struct encoder_speed_values
 {
     uint16_t speed;
@@ -21,12 +20,12 @@ struct encoder_speed_values
 template<uint8_t command_id>
 struct encoder_speed_base
 {
-    using return_type = encoder_speed_values; 
+    using return_type = encoder_speed_values;
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port,
-            crc_calculator_16& crc, boost::log::record_ostream& strm);
-
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm);
 };
 
 std::string get_string(const encoder_speed_values& m);
@@ -46,6 +45,6 @@ extern template struct encoder_speed_base<M2_ENCODER_SPEED_CMD>;
 extern template struct encoder_speed_base<M1_RAW_SPEED_CMD>;
 extern template struct encoder_speed_base<M2_RAW_SPEED_CMD>;
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

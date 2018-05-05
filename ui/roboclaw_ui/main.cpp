@@ -1,7 +1,7 @@
-#include "roboclawmain.h"
 #include <QApplication>
+#include "roboclawmain.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
     RoboclawMain w;

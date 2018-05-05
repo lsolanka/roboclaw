@@ -11,7 +11,6 @@ namespace io
 {
 namespace read_commands
 {
-
 struct motor_instantaneous_speed
 {
     struct return_type
@@ -28,6 +27,6 @@ struct motor_instantaneous_speed
 
 std::string get_string(const motor_instantaneous_speed::return_type& speed);
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

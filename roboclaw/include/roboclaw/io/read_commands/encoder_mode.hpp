@@ -12,7 +12,6 @@ namespace io
 {
 namespace read_commands
 {
-
 struct encoder_mode
 {
     using return_type = roboclaw::io::encoder_mode_1_2;
@@ -24,6 +23,6 @@ struct encoder_mode
 
 std::string get_string(const encoder_mode::return_type& m);
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

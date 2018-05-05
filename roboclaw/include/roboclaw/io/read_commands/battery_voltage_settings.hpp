@@ -11,7 +11,6 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
 struct battery_voltage_settings_base
 {
@@ -22,7 +21,9 @@ struct battery_voltage_settings_base
     };
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
+    static return_type read_response(boost::asio::serial_port& port,
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm)
     {
         return_type r;
         r.min = read_value<uint16_t>(port, crc, strm) / 10.f * volts;
@@ -33,6 +34,6 @@ struct battery_voltage_settings_base
 using main_battery_voltage_settings = battery_voltage_settings_base<59>;
 using logic_battery_voltage_settings = battery_voltage_settings_base<60>;
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

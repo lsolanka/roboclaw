@@ -1,6 +1,6 @@
 #pragma once
-#include <string>
 #include <boost/asio.hpp>
+#include <string>
 #include "../units.hpp"
 
 #include "../crc_calculator.hpp"
@@ -12,7 +12,6 @@ namespace io
 {
 namespace read_commands
 {
-
 struct motor_pwm_values
 {
     struct return_type
@@ -22,11 +21,13 @@ struct motor_pwm_values
     };
     static constexpr uint8_t CMD = 48;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm);
+    static return_type read_response(boost::asio::serial_port& port,
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm);
 };
 
 std::string get_string(const motor_pwm_values::return_type& v);
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

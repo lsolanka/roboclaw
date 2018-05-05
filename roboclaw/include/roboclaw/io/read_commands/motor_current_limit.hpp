@@ -11,7 +11,6 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
 struct motor_current_limit
 {
@@ -23,7 +22,9 @@ struct motor_current_limit
 
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
+    static return_type read_response(boost::asio::serial_port& port,
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm)
     {
         return_type r;
 
@@ -36,6 +37,6 @@ struct motor_current_limit
 using m1_current_limit = motor_current_limit<135>;
 using m2_current_limit = motor_current_limit<136>;
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

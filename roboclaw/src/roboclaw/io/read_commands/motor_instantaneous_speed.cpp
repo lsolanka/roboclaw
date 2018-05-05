@@ -6,11 +6,9 @@ namespace io
 {
 namespace read_commands
 {
-
-motor_instantaneous_speed::return_type
-motor_instantaneous_speed::read_response(boost::asio::serial_port& port,
-                                         crc_calculator_16& crc,
-                                         boost::log::record_ostream& strm)
+motor_instantaneous_speed::return_type motor_instantaneous_speed::read_response(
+        boost::asio::serial_port& port, crc_calculator_16& crc,
+        boost::log::record_ostream& strm)
 {
     return_type r;
 
@@ -27,6 +25,6 @@ std::string get_string(const motor_instantaneous_speed::return_type& speed)
     return ss.str();
 }
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

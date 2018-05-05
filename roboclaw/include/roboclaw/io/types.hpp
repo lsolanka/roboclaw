@@ -1,13 +1,12 @@
 #pragma once
 
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace roboclaw
 {
 namespace io
 {
-
 template<typename T>
 std::string get_string(const T& value)
 {
@@ -47,11 +46,9 @@ struct encoder_count
 inline std::string get_string(const roboclaw::io::encoder_count& m)
 {
     std::stringstream ss;
-    ss << "count: " << m.count << " ["
-       << (m.status.underflow ? "underflow," : "")
+    ss << "count: " << m.count << " [" << (m.status.underflow ? "underflow," : "")
        << (m.status.overflow ? "overflow," : "")
-       << (m.status.forward ? "forward" : "backward")
-       << "]";
+       << (m.status.forward ? "forward" : "backward") << "]";
 
     return ss.str();
 }
@@ -72,13 +69,11 @@ struct encoder_mode_1_2
 
 inline std::string get_string(const encoder_mode_1_2& m)
 {
-    auto print_one = [] (const std::string& heading,
-                         const roboclaw::io::encoder_mode& m)
-    {
+    auto print_one = [](const std::string& heading, const roboclaw::io::encoder_mode& m) {
         std::stringstream ss;
         ss << heading << (m.quadrature ? "quadrature" : "absolute")
-                      << (m.enable_rc_analog ? ", rc/analog enabled" : "");
-        return ss.str(); 
+           << (m.enable_rc_analog ? ", rc/analog enabled" : "");
+        return ss.str();
     };
 
     std::string result = "";
@@ -87,5 +82,5 @@ inline std::string get_string(const encoder_mode_1_2& m)
     return result;
 }
 
-} /* io */ 
-} /* roboclaw */ 
+}  // namespace io
+}  // namespace roboclaw

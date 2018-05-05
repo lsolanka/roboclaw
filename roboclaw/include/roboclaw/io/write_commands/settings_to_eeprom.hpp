@@ -12,7 +12,6 @@ namespace io
 {
 namespace write_commands
 {
-
 struct settings_to_eeprom
 {
     static constexpr uint8_t CMD = 94;
@@ -24,7 +23,6 @@ struct settings_to_eeprom
     }
 };
 
-}
-}
-}
-
+}  // namespace write_commands
+}  // namespace io
+}  // namespace roboclaw

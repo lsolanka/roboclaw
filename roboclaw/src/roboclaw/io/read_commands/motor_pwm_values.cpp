@@ -6,9 +6,9 @@ namespace io
 {
 namespace read_commands
 {
-
-motor_pwm_values::return_type
-motor_pwm_values::read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
+motor_pwm_values::return_type motor_pwm_values::read_response(
+        boost::asio::serial_port& port, crc_calculator_16& crc,
+        boost::log::record_ostream& strm)
 {
     return_type r;
     r.m1 = read_value<uint16_t>(port, crc, strm) / 327.67f;
@@ -23,6 +23,6 @@ std::string get_string(const motor_pwm_values::return_type& v)
     return ss.str();
 }
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

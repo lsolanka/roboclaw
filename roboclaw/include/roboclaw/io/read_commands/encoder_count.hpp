@@ -12,7 +12,6 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
 struct encoder_count_base
 {
@@ -32,6 +31,6 @@ using m2_encoder_count = encoder_count_base<M2_ENCODER_COUNT_CMD>;
 extern template struct encoder_count_base<M1_ENCODER_COUNT_CMD>;
 extern template struct encoder_count_base<M2_ENCODER_COUNT_CMD>;
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

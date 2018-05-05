@@ -1,8 +1,8 @@
 #pragma once
-#include <string>
-#include <sstream>
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
+#include <sstream>
+#include <string>
 #include "../units.hpp"
 
 #include "../crc_calculator.hpp"
@@ -14,14 +14,15 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
 struct temperature_base
 {
     using return_type = quantity<temperature>;
     static constexpr uint8_t CMD = command_id;
 
-    static return_type read_response(boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
+    static return_type read_response(boost::asio::serial_port& port,
+                                     crc_calculator_16& crc,
+                                     boost::log::record_ostream& strm)
     {
         return read_value<uint16_t>(port, crc, strm) / 10.f * celsius::degree;
     }
@@ -36,6 +37,6 @@ std::string get_string(const quantity<temperature>& t)
     return ss.str();
 }
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

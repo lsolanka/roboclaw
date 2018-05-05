@@ -6,10 +6,9 @@ namespace io
 {
 namespace read_commands
 {
-
-encoder_mode::return_type encoder_mode::read_response(
-        boost::asio::serial_port& port, crc_calculator_16& crc,
-        boost::log::record_ostream& strm)
+encoder_mode::return_type encoder_mode::read_response(boost::asio::serial_port& port,
+                                                      crc_calculator_16& crc,
+                                                      boost::log::record_ostream& strm)
 {
     return_type r;
     auto enc1 = read_value<uint8_t>(port, crc, strm);
@@ -23,6 +22,6 @@ encoder_mode::return_type encoder_mode::read_response(
     return r;
 }
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

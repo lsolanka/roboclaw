@@ -6,10 +6,10 @@ namespace io
 {
 namespace write_commands
 {
-
 template<uint8_t command_id>
-void motor_pid_base<command_id>::write(boost::asio::serial_port& port, crc_calculator_16& crc,
-           boost::log::record_ostream& strm) const
+void motor_pid_base<command_id>::write(boost::asio::serial_port& port,
+                                       crc_calculator_16& crc,
+                                       boost::log::record_ostream& strm) const
 {
     write_value(uint32_t(d * 65536.f), port, crc, strm);
     write_value(uint32_t(p * 65536.f), port, crc, strm);
@@ -19,6 +19,6 @@ void motor_pid_base<command_id>::write(boost::asio::serial_port& port, crc_calcu
 
 template struct motor_pid_base<M1_VELOCITY_PID_CMD>;
 template struct motor_pid_base<M2_VELOCITY_PID_CMD>;
-}
-}
-}
+}  // namespace write_commands
+}  // namespace io
+}  // namespace roboclaw

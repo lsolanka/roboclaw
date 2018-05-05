@@ -6,10 +6,10 @@ namespace io
 {
 namespace read_commands
 {
-
 template<uint8_t command_id>
 encoder_speed_values encoder_speed_base<command_id>::read_response(
-        boost::asio::serial_port& port, crc_calculator_16& crc, boost::log::record_ostream& strm)
+        boost::asio::serial_port& port, crc_calculator_16& crc,
+        boost::log::record_ostream& strm)
 {
     return_type r;
 
@@ -31,6 +31,6 @@ template struct encoder_speed_base<M2_ENCODER_SPEED_CMD>;
 template struct encoder_speed_base<M1_RAW_SPEED_CMD>;
 template struct encoder_speed_base<M2_RAW_SPEED_CMD>;
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw

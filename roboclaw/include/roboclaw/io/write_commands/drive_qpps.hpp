@@ -3,10 +3,10 @@
 #include <boost/asio.hpp>
 #include "../units.hpp"
 
-#include "../types.hpp"
+#include "../../logging.hpp"
 #include "../crc_calculator.hpp"
 #include "../io.hpp"
-#include "../../logging.hpp"
+#include "../types.hpp"
 
 namespace roboclaw
 {
@@ -14,7 +14,6 @@ namespace io
 {
 namespace write_commands
 {
-
 template<uint8_t command_id>
 struct drive_qpps_base
 {
@@ -22,7 +21,7 @@ struct drive_qpps_base
 
     static constexpr uint8_t CMD = command_id;
 
-    drive_qpps_base(int32_t value) : qpps(value) { }
+    drive_qpps_base(int32_t value) : qpps(value) {}
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
                boost::log::record_ostream& strm) const
@@ -41,11 +40,9 @@ struct m1_m2_drive_qpps
 
     static constexpr uint8_t CMD = 37;
 
-    m1_m2_drive_qpps(int32_t m1, int32_t m2) :
-        m1_qpps(m1), m2_qpps(m2) { }
+    m1_m2_drive_qpps(int32_t m1, int32_t m2) : m1_qpps(m1), m2_qpps(m2) {}
 
-    m1_m2_drive_qpps(int32_t m1_m2) :
-        m1_qpps(m1_m2), m2_qpps(m1_m2) {  }
+    m1_m2_drive_qpps(int32_t m1_m2) : m1_qpps(m1_m2), m2_qpps(m1_m2) {}
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
                boost::log::record_ostream& strm) const
@@ -55,8 +52,6 @@ struct m1_m2_drive_qpps
     }
 };
 
-}
-}
-}
-
-
+}  // namespace write_commands
+}  // namespace io
+}  // namespace roboclaw

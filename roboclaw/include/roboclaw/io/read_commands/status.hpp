@@ -11,7 +11,6 @@ namespace io
 {
 namespace read_commands
 {
-
 struct status
 {
     struct return_type
@@ -21,17 +20,17 @@ struct status
         unsigned e_stop : 1;
         unsigned temperature_error : 1;
         unsigned temperature2_error : 1;
-        unsigned main_battery_high_error: 1;
-        unsigned logic_battery_high_error: 1;
-        unsigned logic_battery_low_error: 1;
-        unsigned m1_driver_fault: 1;
-        unsigned m2_driver_fault: 1;
-        unsigned main_battery_high_warning: 1;
-        unsigned main_battery_low_warning: 1;
-        unsigned temperature_warning: 1;
-        unsigned temperature2_warning: 1;
-        unsigned m1_home: 1;
-        unsigned m2_home: 1;
+        unsigned main_battery_high_error : 1;
+        unsigned logic_battery_high_error : 1;
+        unsigned logic_battery_low_error : 1;
+        unsigned m1_driver_fault : 1;
+        unsigned m2_driver_fault : 1;
+        unsigned main_battery_high_warning : 1;
+        unsigned main_battery_low_warning : 1;
+        unsigned temperature_warning : 1;
+        unsigned temperature2_warning : 1;
+        unsigned m1_home : 1;
+        unsigned m2_home : 1;
     };
     static constexpr uint8_t CMD = 90;
     static return_type read_response(boost::asio::serial_port& port,
@@ -41,6 +40,6 @@ struct status
 
 std::string get_string(const status::return_type& s);
 
-}
-}
-}
+}  // namespace read_commands
+}  // namespace io
+}  // namespace roboclaw
