@@ -24,7 +24,7 @@ struct motor_pid_base : public roboclaw::io::pid_values
     }
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const;
+               std::string& log_str) const;
 };
 
 constexpr uint8_t M1_VELOCITY_PID_CMD = 28;

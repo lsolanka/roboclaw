@@ -26,10 +26,10 @@ struct encoder_mode_base : public roboclaw::io::encoder_mode
     }
 
     bool write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const
+               std::string& log_str) const
     {
         uint8_t mode = (!quadrature) | (enable_rc_analog << 7);
-        write_value(mode, port, crc, strm);
+        write_value(mode, port, crc, log_str);
         return true;
     }
 };

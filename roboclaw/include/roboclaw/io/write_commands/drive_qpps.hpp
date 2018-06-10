@@ -3,7 +3,6 @@
 #include <boost/asio.hpp>
 #include "../units.hpp"
 
-#include "../../logging.hpp"
 #include "../crc_calculator.hpp"
 #include "../io.hpp"
 #include "../types.hpp"
@@ -24,9 +23,9 @@ struct drive_qpps_base
     drive_qpps_base(int32_t value) : qpps(value) {}
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const
+               std::string& log_str) const
     {
-        write_value(qpps, port, crc, strm);
+        write_value(qpps, port, crc, log_str);
     }
 };
 
@@ -45,10 +44,10 @@ struct m1_m2_drive_qpps
     m1_m2_drive_qpps(int32_t m1_m2) : m1_qpps(m1_m2), m2_qpps(m1_m2) {}
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const
+               std::string& log_str) const
     {
-        write_value(m1_qpps, port, crc, strm);
-        write_value(m2_qpps, port, crc, strm);
+        write_value(m1_qpps, port, crc, log_str);
+        write_value(m2_qpps, port, crc, log_str);
     }
 };
 

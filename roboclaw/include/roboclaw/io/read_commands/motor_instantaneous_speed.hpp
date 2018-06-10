@@ -22,7 +22,7 @@ struct motor_instantaneous_speed
 
     static return_type read_response(boost::asio::serial_port& port,
                                      crc_calculator_16& crc,
-                                     boost::log::record_ostream& strm);
+                                     std::string& log_str);
 };
 
 std::string get_string(const motor_instantaneous_speed::return_type& speed);

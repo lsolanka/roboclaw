@@ -20,7 +20,7 @@ struct encoder_count_base
 
     static return_type read_response(boost::asio::serial_port& port,
                                      crc_calculator_16& crc,
-                                     boost::log::record_ostream& strm);
+                                     std::string& log_str);
 };
 
 static constexpr uint8_t M1_ENCODER_COUNT_CMD = 16;

@@ -2,7 +2,7 @@
 
 std::string roboclaw::io::read_commands::firmware_version::read_response(
         boost::asio::serial_port& port, crc_calculator_16& crc,
-        boost::log::record_ostream& strm)
+        std::string& log_str)
 {
     char c;
     std::string result;
@@ -20,6 +20,6 @@ std::string roboclaw::io::read_commands::firmware_version::read_response(
     }
 
     crc << result;
-    strm << result;
+    log_str += result;
     return result;
 }

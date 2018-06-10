@@ -18,7 +18,7 @@ struct encoder_mode
     static constexpr uint8_t CMD = 91;
     static return_type read_response(boost::asio::serial_port& port,
                                      crc_calculator_16& crc,
-                                     boost::log::record_ostream& strm);
+                                     std::string& log_str);
 };
 
 std::string get_string(const encoder_mode::return_type& m);

@@ -24,12 +24,12 @@ struct motor_current_limit
 
     static return_type read_response(boost::asio::serial_port& port,
                                      crc_calculator_16& crc,
-                                     boost::log::record_ostream& strm)
+                                     std::string& log_str)
     {
         return_type r;
 
-        r.max = read_value<uint32_t>(port, crc, strm) / 100.f * amperes;
-        r.min = read_value<uint32_t>(port, crc, strm) / 100.f * amperes;
+        r.max = read_value<uint32_t>(port, crc, log_str) / 100.f * amperes;
+        r.min = read_value<uint32_t>(port, crc, log_str) / 100.f * amperes;
 
         return r;
     }

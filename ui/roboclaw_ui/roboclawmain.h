@@ -1,6 +1,8 @@
 #ifndef ROBOCLAWMAIN_H
 #define ROBOCLAWMAIN_H
 
+#include <memory>
+
 #include <QMainWindow>
 #include <QTimer>
 #include "roboclaw/io/io.hpp"
@@ -28,6 +30,7 @@ class RoboclawMain : public QMainWindow
 
   private:
     Ui::RoboclawMain* ui;
+    std::shared_ptr<spdlog::logger> roboclaw_lg;    
     roboclaw::io::serial_controller controller;
     void clearAllSliders();
 

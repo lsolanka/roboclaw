@@ -20,7 +20,7 @@ struct motor_pid_base
 
     static return_type read_response(boost::asio::serial_port& port,
                                      crc_calculator_16& crc,
-                                     boost::log::record_ostream& strm);
+                                     std::string& log_str);
 };
 using m1_velocity_pid = motor_pid_base<55>;
 using m2_velocity_pid = motor_pid_base<56>;

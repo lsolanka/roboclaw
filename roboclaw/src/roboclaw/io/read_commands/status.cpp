@@ -8,9 +8,9 @@ namespace read_commands
 {
 status::return_type status::read_response(boost::asio::serial_port& port,
                                           crc_calculator_16& crc,
-                                          boost::log::record_ostream& strm)
+                                          std::string& log_str)
 {
-    auto value = read_value<uint16_t>(port, crc, strm);
+    auto value = read_value<uint16_t>(port, crc, log_str);
     return_type r;
 
     r.m1_overcurrent = value & 0x0001;

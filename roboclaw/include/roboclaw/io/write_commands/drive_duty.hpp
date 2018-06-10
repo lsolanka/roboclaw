@@ -3,7 +3,6 @@
 #include <boost/asio.hpp>
 #include "../units.hpp"
 
-#include "../../logging.hpp"
 #include "../crc_calculator.hpp"
 #include "../io.hpp"
 #include "../types.hpp"
@@ -24,7 +23,7 @@ struct drive_duty_base
     drive_duty_base(float duty);
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const;
+               std::string& log_str) const;
 };
 
 using m1_drive_duty = drive_duty_base<32>;
@@ -46,7 +45,7 @@ struct m1_m2_drive_duty
     void init_duty(float m1, float m2);
 
     void write(boost::asio::serial_port& port, crc_calculator_16& crc,
-               boost::log::record_ostream& strm) const;
+               std::string& log_str) const;
 };
 
 }  // namespace write_commands

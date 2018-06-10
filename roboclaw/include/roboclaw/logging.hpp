@@ -1,19 +1,21 @@
 #pragma once
 
-#include <boost/log/expressions.hpp>
-#include <boost/log/sources/global_logger_storage.hpp>
-#include <boost/log/sources/logger.hpp>
-#include <boost/log/support/date_time.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/log/utility/setup.hpp>
+#include <spdlog/spdlog.h>
 
-using boost::log::trivial::debug;
-using boost::log::trivial::error;
-using boost::log::trivial::fatal;
-using boost::log::trivial::info;
-using boost::log::trivial::trace;
-using boost::log::trivial::warning;
+namespace roboclaw
+{
 
-typedef boost::log::sources::severity_logger<boost::log::trivial::severity_level>
-        logger_t;
-BOOST_LOG_GLOBAL_LOGGER(logger, logger_t)
+inline auto get_roboclaw_logger()
+{
+    auto lg = spdlog::get("roboclaw");
+    if (!lg)
+    {
+        lg = spdlog::stdout_logger_mt("roboclaw");
+        lg->warn(
+                "Could not get the 'roboclaw' logger. Created a logger with name "
+                "'roboclaw'");
+    }
+    return lg;
+}
+
+}  // namespace roboclaw

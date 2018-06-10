@@ -8,12 +8,12 @@ namespace read_commands
 {
 motor_instantaneous_speed::return_type motor_instantaneous_speed::read_response(
         boost::asio::serial_port& port, crc_calculator_16& crc,
-        boost::log::record_ostream& strm)
+        std::string& log_str)
 {
     return_type r;
 
-    r.m1 = read_value<int32_t>(port, crc, strm);
-    r.m2 = read_value<int32_t>(port, crc, strm);
+    r.m1 = read_value<int32_t>(port, crc, log_str);
+    r.m2 = read_value<int32_t>(port, crc, log_str);
 
     return r;
 }

@@ -1,43 +1,26 @@
-#include "roboclawmain.h"
-#include "ui_roboclawmain.h"
+#include <spdlog/spdlog.h>
 
 #include <roboclaw/io/read_commands.hpp>
 #include <roboclaw/io/types.hpp>
 #include <roboclaw/io/write_commands.hpp>
 
+#include "roboclawmain.h"
+#include "ui_roboclawmain.h"
+
 namespace read_commands = roboclaw::io::read_commands;
 namespace write_commands = roboclaw::io::write_commands;
 
-BOOST_LOG_GLOBAL_LOGGER_INIT(logger, logger_t)
-{
-    namespace expr = boost::log::expressions;
-    logger_t lg;
-    boost::log::add_common_attributes();
-    boost::log::add_file_log(
-            boost::log::keywords::file_name = "log.txt",
-            boost::log::keywords::format =
-                    (expr::stream
-                     << expr::format_date_time<boost::posix_time::ptime>(
-                                "TimeStamp", "%Y-%m-%d %H:%M:%S")
-                     << " ["
-                     << expr::attr<boost::log::trivial::severity_level>("Severity")
-                     << "] " << expr::smessage));
-    boost::log::add_console_log(
-            std::cout,
-            boost::log::keywords::format =
-                    (expr::stream
-                     << expr::format_date_time<boost::posix_time::ptime>(
-                                "TimeStamp", "%Y-%m-%d %H:%M:%S")
-                     << " ["
-                     << expr::attr<boost::log::trivial::severity_level>("Severity")
-                     << "] " << expr::smessage));
-    return lg;
-}
-
 RoboclawMain::RoboclawMain(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::RoboclawMain), controller("/dev/ttyACM0", 0x80)
+    : QMainWindow(parent),
+      ui(new Ui::RoboclawMain),
+      roboclaw_lg(spdlog::stdout_color_mt("roboclaw")),
+      controller("/dev/ttyACM0", 0x80)
 {
     ui->setupUi(this);
+
+    // Setup roboclaw library logging
+    spdlog::set_async_mode(8192);
+    spdlog::set_level(spdlog::level::debug);
 
     connect(ui->stopAllButton, SIGNAL(pressed()), this, SLOT(stopAll()));
     connect(ui->m1DutySlider, SIGNAL(valueChanged(int)), this, SLOT(changeM1Duty(int)));
