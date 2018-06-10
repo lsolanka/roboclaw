@@ -3,8 +3,8 @@ cmake_policy(SET CMP0048 NEW)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.19.161.tar.gz"
-    SHA1 "9af482b6a54875bbbb221274f7290324dff29919"
+    URL "https://github.com/lsolanka/hunter/archive/v0.22.4-rosdevel7.tar.gz"
+    SHA1 "3d48fff4150ca3b0a9e19e6a095282e2636e22a4"
 )
 
 project(roboclaw VERSION 0.1.0 LANGUAGES C CXX)
@@ -14,9 +14,13 @@ option(BUILD_UI "Include the QT Test UI in the build" OFF)
 
 hunter_add_package(Boost COMPONENTS program_options system log filesystem
                                     thread)
+hunter_add_package(spdlog)
 
 add_subdirectory(roboclaw)
 if (BUILD_UI)
+    # For fonts, use e.g. QT_QPA_FONTDIR=<path_to_hunter>/.hunter/_Base/3d48fff/51e9eea/70120ea/Install/lib/fonts
+    # Otherwise they will not be displayed
+    hunter_add_package(Qt)
     add_subdirectory(ui/roboclaw_ui)
 endif()
 
