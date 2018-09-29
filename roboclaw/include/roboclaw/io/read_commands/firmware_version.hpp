@@ -1,6 +1,5 @@
 #pragma once
 #include <boost/asio.hpp>
-#include "../units.hpp"
 
 #include "../crc_calculator.hpp"
 #include "../io.hpp"

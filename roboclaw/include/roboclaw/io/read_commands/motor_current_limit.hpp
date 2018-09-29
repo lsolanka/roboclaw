@@ -16,8 +16,8 @@ struct motor_current_limit
 {
     struct return_type
     {
-        quantity<current> min;
-        quantity<current> max;
+        units::quantity<units::current> min;
+        units::quantity<units::current> max;
     };
 
     static constexpr uint8_t CMD = command_id;
@@ -28,8 +28,8 @@ struct motor_current_limit
     {
         return_type r;
 
-        r.max = read_value<uint32_t>(port, crc, log_str) / 100.f * amperes;
-        r.min = read_value<uint32_t>(port, crc, log_str) / 100.f * amperes;
+        r.max = read_value<uint32_t>(port, crc, log_str) / 100.f * units::amperes;
+        r.min = read_value<uint32_t>(port, crc, log_str) / 100.f * units::amperes;
 
         return r;
     }

@@ -15,7 +15,7 @@ namespace read_commands
 template<uint8_t command_id>
 struct battery_voltage_base
 {
-    using return_type = quantity<electric_potential>;
+    using return_type = units::quantity<units::electric_potential>;
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port,
@@ -23,7 +23,7 @@ struct battery_voltage_base
                                      std::string& log_str)
     {
         uint16_t value = read_value<uint16_t>(port, crc, log_str);
-        return (value / 10.f) * volts;
+        return (value / 10.f) * units::volts;
     }
 };
 using main_battery_voltage = battery_voltage_base<24>;

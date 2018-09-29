@@ -16,8 +16,8 @@ struct battery_voltage_settings_base
 {
     struct return_type
     {
-        quantity<electric_potential> min;
-        quantity<electric_potential> max;
+        units::quantity<units::electric_potential> min;
+        units::quantity<units::electric_potential> max;
     };
     static constexpr uint8_t CMD = command_id;
 
@@ -26,8 +26,8 @@ struct battery_voltage_settings_base
                                      std::string& log_str)
     {
         return_type r;
-        r.min = read_value<uint16_t>(port, crc, log_str) / 10.f * volts;
-        r.max = read_value<uint16_t>(port, crc, log_str) / 10.f * volts;
+        r.min = read_value<uint16_t>(port, crc, log_str) / 10.f * units::volts;
+        r.max = read_value<uint16_t>(port, crc, log_str) / 10.f * units::volts;
         return r;
     }
 };

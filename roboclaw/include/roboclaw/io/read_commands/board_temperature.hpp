@@ -17,20 +17,19 @@ namespace read_commands
 template<uint8_t command_id>
 struct temperature_base
 {
-    using return_type = quantity<temperature>;
+    using return_type = units::quantity<units::temperature>;
     static constexpr uint8_t CMD = command_id;
 
     static return_type read_response(boost::asio::serial_port& port,
-                                     crc_calculator_16& crc,
-                                     std::string& log_str)
+                                     crc_calculator_16& crc, std::string& log_str)
     {
-        return read_value<uint16_t>(port, crc, log_str) / 10.f * celsius::degree;
+        return read_value<uint16_t>(port, crc, log_str) / 10.f * units::celsius::degree;
     }
 };
 using board_temperature_1 = temperature_base<82>;
 using board_temperature_2 = temperature_base<83>;
 
-std::string get_string(const quantity<temperature>& t)
+std::string get_string(const units::quantity<units::temperature>& t)
 {
     std::stringstream ss;
     ss << t;

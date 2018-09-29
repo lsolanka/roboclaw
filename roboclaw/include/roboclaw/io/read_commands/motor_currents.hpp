@@ -15,8 +15,8 @@ struct motor_currents
 {
     struct return_type
     {
-        quantity<current> m1;
-        quantity<current> m2;
+        units::quantity<units::current> m1;
+        units::quantity<units::current> m2;
     };
     static constexpr uint8_t CMD = 49;
 
@@ -24,8 +24,8 @@ struct motor_currents
                                      crc_calculator_16& crc, std::string& log_str)
     {
         return_type r;
-        r.m1 = read_value<uint16_t>(port, crc, log_str) / 100.f * amperes;
-        r.m2 = read_value<uint16_t>(port, crc, log_str) / 100.f * amperes;
+        r.m1 = read_value<uint16_t>(port, crc, log_str) / 100.f * units::amperes;
+        r.m2 = read_value<uint16_t>(port, crc, log_str) / 100.f * units::amperes;
         return r;
     }
 };

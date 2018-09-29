@@ -6,8 +6,10 @@
 #include <boost/units/systems/si/io.hpp>
 #include <boost/units/systems/temperature/celsius.hpp>
 
-template<class Units>
-using quantity = boost::units::quantity<Units, float>;
+namespace roboclaw::units
+{
+
+using boost::units::quantity;
 
 using boost::units::si::electric_potential;
 using boost::units::si::volt;
@@ -19,3 +21,5 @@ using boost::units::si::current;
 
 using boost::units::celsius::temperature;
 namespace celsius = boost::units::celsius;
+
+} // namespace roboclaw::units

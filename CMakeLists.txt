@@ -7,7 +7,7 @@ HunterGate(
     SHA1 "3d48fff4150ca3b0a9e19e6a095282e2636e22a4"
 )
 
-project(roboclaw VERSION 0.1.1 LANGUAGES C CXX)
+project(roboclaw VERSION 0.1.2 LANGUAGES C CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_UI "Include the QT Test UI in the build" OFF)
