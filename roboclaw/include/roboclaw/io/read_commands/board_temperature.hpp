@@ -29,7 +29,7 @@ struct temperature_base
 using board_temperature_1 = temperature_base<82>;
 using board_temperature_2 = temperature_base<83>;
 
-std::string get_string(const units::quantity<units::temperature>& t)
+inline std::string get_string(const units::quantity<units::temperature>& t)
 {
     std::stringstream ss;
     ss << t;
