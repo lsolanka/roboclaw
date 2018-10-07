@@ -150,7 +150,7 @@ class serial_controller
                 lg->error("Response read completed but with error");
                 return false;
             }
-            else if (timer_result)
+            else if (!read_result)
             {
                 lg->error("Response read timed out for '{}'", log_str);
                 return false;
