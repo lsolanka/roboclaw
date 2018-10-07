@@ -13,7 +13,7 @@ encoder_speed_values encoder_speed_base<command_id>::read_response(
 {
     return_type r;
 
-    r.speed = read_value<uint32_t>(port, crc, log_str);
+    r.speed = read_value<int32_t>(port, crc, log_str);
     r.forward = !(read_value<uint8_t>(port, crc, log_str) & 0x01);
 
     return r;

@@ -13,7 +13,7 @@ namespace read_commands
 {
 struct encoder_speed_values
 {
-    uint16_t speed;
+    int32_t speed;
     bool forward;
 };
 
