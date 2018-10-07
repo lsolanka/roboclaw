@@ -3,8 +3,9 @@ cmake_policy(SET CMP0048 NEW)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/lsolanka/hunter/archive/v0.22.4-rosdevel7.tar.gz"
-    SHA1 "3d48fff4150ca3b0a9e19e6a095282e2636e22a4"
+    URL "https://github.com/lsolanka/hunter/archive/v0.22.4-rosdevel18.tar.gz"
+    SHA1 "92f4925f24dbb460df6ca1d5ab831b23da6b040f"
+    LOCAL
 )
 
 project(roboclaw VERSION 0.1.2 LANGUAGES C CXX)

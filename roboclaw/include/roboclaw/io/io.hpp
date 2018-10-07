@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <typeinfo>
+#include <optional>
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -120,8 +121,41 @@ class serial_controller
         log_str += fmt::format(" {:#x}", calculated_crc.get());
 
         uint8_t response;
-        boost::asio::read(port, boost::asio::buffer(&response, 1));
-        log_str += fmt::format("; recv: {:#x}", response);
+        {
+            std::optional<boost::system::error_code> timer_result;
+            boost::asio::deadline_timer timer(port.get_io_service());
+            timer.expires_from_now(boost::posix_time::milliseconds{100});
+            timer.async_wait([&timer_result](const auto& error) { timer_result = error; });
+
+
+            std::optional<boost::system::error_code> read_result;
+            boost::asio::async_read(port, boost::asio::buffer(&response, 1),
+                    [&read_result](const auto& error, size_t) { read_result = error; });
+
+            port.get_io_service().reset();
+            while (port.get_io_service().run_one())
+            {
+                if (read_result)
+                {
+                    timer.cancel();
+                }
+                else if (timer_result)
+                {
+                    port.cancel();
+                }
+            }
+            if (read_result && *read_result)
+            {
+                // If read but failure bail out...
+                lg->error("Response read completed but with error");
+                return false;
+            }
+            else if (timer_result)
+            {
+                lg->error("Response read timed out for '{}'", log_str);
+                return false;
+            }
+        }
 
         lg->debug(log_str);
         return response == 0xff;
