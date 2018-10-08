@@ -65,7 +65,8 @@ T read_value_raw(boost::asio::serial_port& port,
     }
     if (read_result && *read_result)
     {
-        throw std::runtime_error("read completed but with error");
+        throw std::runtime_error(
+                fmt::format("read completed but with error: {}", read_result->message()));
     }
     else if (!read_result)
     {
@@ -123,31 +124,39 @@ class serial_controller
     {
         std::string log_str;
 
-        crc_calculator_16 calculated_crc;
-        calculated_crc << get_address() << uint8_t(command::CMD);
-
-        send_command<command>(log_str);
-
-        log_str += "; recv:";
-        typename command::return_type result =
-                command::read_response(get_port(), calculated_crc, log_str);
-        uint16_t received_crc = read_crc(get_port());
-
-        log_str += fmt::format(" {:#x}", received_crc);
-        lg->debug(log_str);
-
-        if (calculated_crc.get() != received_crc)
+        try
         {
-            using boost::core::demangle;
-            std::stringstream ss;
-            ss << "received crc=" << std::hex << received_crc << " does not match "
-               << "calculated crc=" << std::hex << calculated_crc.get() << " for command "
-               << +uint8_t(command::CMD) << " (" << demangle(typeid(command).name())
-               << ")";
-            throw std::runtime_error(ss.str());
-        }
+            crc_calculator_16 calculated_crc;
+            calculated_crc << get_address() << uint8_t(command::CMD);
 
-        return result;
+            send_command<command>(log_str);
+
+            log_str += "; recv:";
+            typename command::return_type result =
+                    command::read_response(get_port(), calculated_crc, log_str);
+            uint16_t received_crc = read_crc(get_port());
+
+            log_str += fmt::format(" {:#x}", received_crc);
+            lg->debug(log_str);
+
+            if (calculated_crc.get() != received_crc)
+            {
+                using boost::core::demangle;
+                std::stringstream ss;
+                ss << "received crc=" << std::hex << received_crc << " does not match "
+                   << "calculated crc=" << std::hex << calculated_crc.get()
+                   << " for command " << +uint8_t(command::CMD) << " ("
+                   << demangle(typeid(command).name()) << ")";
+                throw std::runtime_error(ss.str());
+            }
+
+            return result;
+        }
+        catch (std::runtime_error& e)
+        {
+            lg->error("failed read command '{}': {}", log_str, e.what());
+            throw;
+        }
     }
 
     template<typename command>
