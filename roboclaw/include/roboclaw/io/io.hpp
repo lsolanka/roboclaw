@@ -6,9 +6,9 @@
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <typeinfo>
-#include <optional>
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -34,11 +34,55 @@ inline void write_crc(boost::asio::serial_port& port, uint16_t crc)
 }
 
 template<typename T>
-T read_value(boost::asio::serial_port& port, crc_calculator_16& crc, std::string& log_str)
+T read_value_raw(boost::asio::serial_port& port,
+                 const boost::posix_time::time_duration& timeout =
+                         boost::posix_time::milliseconds{100})
 {
     static_assert(std::is_integral<T>(), "read_value() can only process integral types");
     T value;
-    boost::asio::read(port, boost::asio::buffer(&value, sizeof(T)));
+
+    std::optional<boost::system::error_code> timer_result;
+    boost::asio::deadline_timer timer(port.get_io_service());
+    timer.expires_from_now(boost::posix_time::milliseconds{100});
+    timer.async_wait([&timer_result](const auto& error) { timer_result = error; });
+
+    std::optional<boost::system::error_code> read_result;
+    boost::asio::async_read(
+            port, boost::asio::buffer(&value, sizeof(T)),
+            [&read_result](const auto& error, size_t) { read_result = error; });
+
+    port.get_io_service().reset();
+    while (port.get_io_service().run_one())
+    {
+        if (read_result)
+        {
+            timer.cancel();
+        }
+        else if (timer_result)
+        {
+            port.cancel();
+        }
+    }
+    if (read_result && *read_result)
+    {
+        throw std::runtime_error("read completed but with error");
+    }
+    else if (!read_result)
+    {
+        throw std::runtime_error("read timed out");
+    }
+
+    return value;
+}
+
+template<typename T>
+T read_value(boost::asio::serial_port& port, crc_calculator_16& crc, std::string& log_str,
+             const boost::posix_time::time_duration& timeout =
+                     boost::posix_time::milliseconds{100})
+{
+    static_assert(std::is_integral<T>(), "read_value() can only process integral types");
+
+    T value = read_value_raw<T>(port, timeout);
     crc << value;
     boost::endian::big_to_native_inplace(value);
     log_str += fmt::format(" {:d}", value);
@@ -111,54 +155,28 @@ class serial_controller
     {
         std::string log_str;
 
-        send_command<command>(log_str);
-
-        crc_calculator_16 calculated_crc;
-        calculated_crc << get_address() << uint8_t(command::CMD);
-
-        cmd.write(get_port(), calculated_crc, log_str);
-        write_crc(get_port(), calculated_crc.get());
-        log_str += fmt::format(" {:#x}", calculated_crc.get());
-
-        uint8_t response;
+        try
         {
-            std::optional<boost::system::error_code> timer_result;
-            boost::asio::deadline_timer timer(port.get_io_service());
-            timer.expires_from_now(boost::posix_time::milliseconds{100});
-            timer.async_wait([&timer_result](const auto& error) { timer_result = error; });
+            send_command<command>(log_str);
 
+            crc_calculator_16 calculated_crc;
+            calculated_crc << get_address() << uint8_t(command::CMD);
 
-            std::optional<boost::system::error_code> read_result;
-            boost::asio::async_read(port, boost::asio::buffer(&response, 1),
-                    [&read_result](const auto& error, size_t) { read_result = error; });
+            cmd.write(get_port(), calculated_crc, log_str);
+            write_crc(get_port(), calculated_crc.get());
+            log_str += fmt::format(" {:#x}", calculated_crc.get());
 
-            port.get_io_service().reset();
-            while (port.get_io_service().run_one())
-            {
-                if (read_result)
-                {
-                    timer.cancel();
-                }
-                else if (timer_result)
-                {
-                    port.cancel();
-                }
-            }
-            if (read_result && *read_result)
-            {
-                // If read but failure bail out...
-                lg->error("Response read completed but with error");
-                return false;
-            }
-            else if (!read_result)
-            {
-                lg->error("Response read timed out for '{}'", log_str);
-                return false;
-            }
+            uint8_t response = read_value_raw<uint8_t>(port);
+            log_str += fmt::format("; recv: {:#x}", response);
+
+            lg->debug(log_str);
+            return response == 0xff;
         }
-
-        lg->debug(log_str);
-        return response == 0xff;
+        catch (std::runtime_error& e)
+        {
+            lg->error("Write for command {} failed: {}", log_str, e.what());
+            return false;
+        }
     }
 
     ~serial_controller() { port.close(); }
