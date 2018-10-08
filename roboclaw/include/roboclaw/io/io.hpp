@@ -63,14 +63,17 @@ T read_value_raw(boost::asio::serial_port& port,
             port.cancel();
         }
     }
-    if (read_result && *read_result)
+    if (*read_result)
     {
-        throw std::runtime_error(
-                fmt::format("read completed but with error: {}", read_result->message()));
-    }
-    else if (!read_result)
-    {
-        throw std::runtime_error("read timed out");
+        if (!*timer_result)
+        {
+            throw std::runtime_error("read timed out");
+        }
+        else
+        {
+            throw std::runtime_error(fmt::format("read completed but with error: {}",
+                                                 read_result->message()));
+        }
     }
 
     return value;
