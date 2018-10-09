@@ -163,6 +163,29 @@ class serial_controller
     }
 
     template<typename command>
+    typename command::return_type read(int ntries)
+    {
+        if (ntries < 1) ntries = 1;
+
+        for (int attempt = 1; attempt <= ntries; ++attempt)
+        {
+            try
+            {
+                return read<command>();
+            }
+            catch (...)
+            {
+                if (attempt >= ntries)
+                {
+                    lg->error("Reached {} attempts. Giving up.", ntries);
+                    throw;
+                }
+                lg->info("Retrying the command");
+            }
+        }
+    }
+
+    template<typename command>
     bool write(const command& cmd)
     {
         std::string log_str;
@@ -188,6 +211,25 @@ class serial_controller
         {
             lg->error("Write for command {} failed: {}", log_str, e.what());
             return false;
+        }
+    }
+
+    template<typename command>
+    bool write(const command& cmd, int ntries)
+    {
+        if (ntries < 1) ntries = 1;
+
+        for (int attempt = 1; attempt <= ntries; ++attempt)
+        {
+            bool success = write(cmd);
+            if (success) return true;
+
+            if (attempt >= ntries)
+            {
+                lg->error("Reached {} attempts. Giving up.", ntries);
+                return false;
+            }
+            lg->info("Retrying the command");
         }
     }
 
