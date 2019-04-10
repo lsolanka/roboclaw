@@ -8,7 +8,7 @@ HunterGate(
     LOCAL
 )
 
-project(roboclaw VERSION 0.1.2 LANGUAGES C CXX)
+project(roboclaw VERSION 0.1.3 LANGUAGES C CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_UI "Include the QT Test UI in the build" OFF)
