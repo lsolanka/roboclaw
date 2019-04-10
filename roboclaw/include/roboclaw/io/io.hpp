@@ -16,10 +16,9 @@
 #include <roboclaw/io/crc_calculator.hpp>
 #include <roboclaw/logging.hpp>
 
-namespace roboclaw
+namespace roboclaw::io
 {
-namespace io
-{
+
 inline uint16_t read_crc(boost::asio::serial_port& port)
 {
     uint16_t value;
@@ -33,6 +32,7 @@ inline void write_crc(boost::asio::serial_port& port, uint16_t crc)
     boost::asio::write(port, boost::asio::buffer(&crc, 2));
 }
 
+/** Read a raw value from the serial port. This does not manipulate the CRC calculator. */
 template<typename T>
 T read_value_raw(boost::asio::serial_port& port,
                  const boost::posix_time::time_duration& timeout =
@@ -79,6 +79,15 @@ T read_value_raw(boost::asio::serial_port& port,
     return value;
 }
 
+/** Read a value from the serial port, adding this to the CRC calculator.
+ * @param port The serial port to read from
+ * @param crc Crc calculator the read value will be added to
+ * @param log_str Log string the information about the read value will be added to
+ * @param timeout Timeout for the read command
+ * @returns The read value of the type selected as the template parameter
+ *
+ * @note This function only allows to read integral types.
+ */
 template<typename T>
 T read_value(boost::asio::serial_port& port, crc_calculator_16& crc, std::string& log_str,
              const boost::posix_time::time_duration& timeout =
@@ -93,6 +102,14 @@ T read_value(boost::asio::serial_port& port, crc_calculator_16& crc, std::string
     return value;
 }
 
+/** Write an integral value to the serial port and add this value to the CRC calculator
+ * @param value Value to write
+ * @param port Serial port to write to
+ * @param crc CRC calculator the value will be added to
+ * @param log_str Log string the information about the written value will be appended to
+ *
+ * @note This function does not yet support a timeout
+ */
 template<typename T>
 void write_value(T value, boost::asio::serial_port& port, crc_calculator_16& crc,
                  std::string& log_str)
@@ -104,9 +121,15 @@ void write_value(T value, boost::asio::serial_port& port, crc_calculator_16& crc
     crc << value;
 }
 
+/** Roboclaw serial controller. */
 class serial_controller
 {
   public:
+    /** Initialise the controller, giving the port name and its address.
+     *
+     * @param port_name Port name (path) of the controller, e.g. `/dev/roboclaw`
+     * @param address Address of the controller.
+     */
     serial_controller(const std::string& port_name, uint8_t address)
         : lg(get_roboclaw_logger()), address(address), port(io_service)
     {
@@ -118,10 +141,17 @@ class serial_controller
         }
     }
 
+    /** Return the address of the controller */
     uint8_t get_address() const { return address; }
 
+    /** Return the serial port name of the controller */
     boost::asio::serial_port& get_port() { return port; }
 
+    /** Read a value from the controller. The command is given by the template parameter
+     * number.
+     *
+     * @throws std::runtime_error If the read times out.
+     */
     template<typename command>
     typename command::return_type read()
     {
@@ -162,6 +192,16 @@ class serial_controller
         }
     }
 
+    /** Read the value from the controller but re-try if the read times out. The read
+     * command is given as the template parameter.
+     *
+     * @param ntries Number of tries to re-try. If less than 1, try only once.
+     * @returns The return value of the command. The type of the value is determined by
+     * `command::return_type`.
+     *
+     * @throws std::runtime_error if the read command fails and the max number of tries is
+     *         reached.
+     */
     template<typename command>
     typename command::return_type read(int ntries)
     {
@@ -252,5 +292,4 @@ class serial_controller
     }
 };
 
-}  // namespace io
-}  // namespace roboclaw
+}  // namespace roboclaw::io
